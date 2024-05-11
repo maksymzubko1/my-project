@@ -1,6 +1,3 @@
-// Borrowed & modified from https://github.com/jenseng/abuse-the-platform/blob/main/app/utils/singleton.ts
-// Thanks @jenseng!
-
 export const singleton = <Value>(
   name: string,
   valueFactory: () => Value,
