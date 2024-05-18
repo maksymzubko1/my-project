@@ -74,3 +74,21 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export async function asyncIterableToFile(
+  asyncIterable: AsyncIterable<Uint8Array>,
+  fileName: string,
+  fileType: string
+): Promise<File> {
+  const chunks: Uint8Array[] = [];
+
+  for await (const chunk of asyncIterable) {
+    chunks.push(chunk);
+  }
+
+  const blob = new Blob(chunks, { type: fileType });
+
+  const file = new File([blob as BlobPart], fileName, { type: fileType });
+
+  return file;
+}

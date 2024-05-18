@@ -56,7 +56,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return createUserSession({
     redirectTo,
-    remember: remember === "on" ? true : false,
+    remember: remember === "on",
     request,
     userId: user.id,
   });
@@ -66,7 +66,7 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get("redirectTo") || "/admin/posts";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
