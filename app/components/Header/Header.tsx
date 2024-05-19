@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Link, useLocation } from "@remix-run/react";
 import { useUser } from "~/utils";
+import Button from "~/components/Button/Button";
 
 function getCurrentPage(pathname: string) {
   switch (pathname) {
@@ -31,12 +32,9 @@ const Header = () => {
         </Link>
       </div>
       <Form action="/logout" method="post">
-        <button
-          type="submit"
-          className="rounded bg-slate-600 px-4 py-2 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
-        >
+        <Button isSubmit variant={"secondary-2"}>
           Logout
-        </button>
+        </Button>
       </Form>
     </header>
   );

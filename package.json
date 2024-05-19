@@ -39,6 +39,7 @@
     "@remix-run/express": "^2.9.2",
     "@remix-run/node": "^2.9.2",
     "@remix-run/react": "^2.9.2",
+    "@tinymce/tinymce-react": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "chokidar": "^3.6.0",
     "compression": "^1.7.4",

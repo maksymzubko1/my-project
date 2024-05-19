@@ -146,7 +146,7 @@ export default function NoteDetailsPage() {
 
   if(isFetchingContent){
     return (
-      <Spinner/>
+      <Spinner size={"medium"}/>
     )
   }
 
@@ -261,7 +261,7 @@ export default function NoteDetailsPage() {
             disabled={isLoading}
             type="submit"
             formMethod={"post"}
-            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-r disabled:opacity-25"
+            className="rounded bg-blue-500 px-4 py-2 text-white disabled:opacity-25"
           >
             Save
           </button>
