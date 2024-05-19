@@ -1,15 +1,15 @@
 import React, { HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute, useEffect, useRef } from "react";
 
-const Input = ({ name, error, fullWidth, initialValue, inputType, inputSettings, label, id, value }: InputProps) => {
+const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSettings, label, id, value }: InputProps) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if(error){
+    if (error) {
       inputRef.current.focus();
     }
   }, [error, inputRef.current]);
 
-  const inputComponent = inputType === "textArea" ? (
+  const inputComponent = inputSettings.variant === "textarea" ? (
     <textarea
       id={id}
       ref={inputRef}
@@ -19,6 +19,7 @@ const Input = ({ name, error, fullWidth, initialValue, inputType, inputSettings,
       autoComplete={inputSettings.autoComplete}
       autoFocus={inputSettings.autoFocus}
       defaultValue={initialValue ?? ""}
+      placeholder={placeholder}
       value={value || undefined}
       className={`flex-1 rounded-md border border-gray-500 px-2 py-1 text-lg`}
       aria-invalid={!!error}
@@ -39,6 +40,7 @@ const Input = ({ name, error, fullWidth, initialValue, inputType, inputSettings,
       autoFocus={inputSettings.autoFocus}
       className={`flex-1 rounded-md border border-gray-500 px-2 py-1 text-lg`}
       aria-invalid={!!error}
+      placeholder={placeholder}
       aria-describedby={
         error ? `${name}-error` : undefined
       }
@@ -75,6 +77,7 @@ interface InputProps {
     autoFocus?: boolean;
     autoComplete?: HTMLInputAutoCompleteAttribute;
   };
+  placeholder?: string;
   label?: string;
   value?: string;
   id: string;

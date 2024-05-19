@@ -4,11 +4,10 @@ import { useUser } from "~/utils";
 import Button from "~/components/Button/Button";
 
 function getCurrentPage(pathname: string) {
-  switch (pathname) {
-    case "/admin/posts":
-      return "Posts";
-    case "/admin/rss":
-      return "RSS";
+  if(pathname.includes("/admin/posts")){
+    return "Posts";
+  } else if(pathname.includes("/admin/rss")){
+    return "RSS";
   }
 }
 

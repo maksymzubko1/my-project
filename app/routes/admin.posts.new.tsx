@@ -7,11 +7,16 @@ import {
   unstable_parseMultipartFormData
 } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { useEffect, useRef } from "react";
 
 import { createPost } from "~/models/posts.server";
 import { requireUserId } from "~/session.server";
 import AwsService from "~/services/aws.service";
+import Input from "~/components/Input/Input";
+import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
+import Button from "~/components/Button/Button";
+import useFormLoading from "~/hooks/useFormLoading";
+import FileUpload from "~/components/FileUpload/FileUpload";
+import TagsInput from "~/components/Input/TagsInput";
 
 export const meta: MetaFunction = () => [{ title: "Admin - New Post" }];
 
@@ -73,7 +78,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const uploadedFile = image
     ? await AwsService.uploadImage(image) as string : undefined;
 
-  if(typeof uploadedFile !== "string" && uploadedFile?.error){
+  if (typeof uploadedFile !== "string" && uploadedFile?.error) {
     return json(
       { errors: { file: uploadedFile.error, title: null, tags: null, body: null } },
       { status: 400 }
@@ -89,23 +94,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function NewNotePage() {
   const actionData = useActionData<typeof action>();
-  const titleRef = useRef<HTMLInputElement>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
-  const photoRef = useRef<HTMLInputElement>(null);
-  const tagsRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus();
-    } else if (actionData?.errors?.body) {
-      bodyRef.current?.focus();
-    } else if (actionData?.errors?.file) {
-      photoRef.current?.focus();
-    } else if (actionData?.errors?.tags) {
-      tagsRef.current?.focus();
-    }
-
-  }, [actionData]);
+  const isLoading = useFormLoading();
 
   return (
     <Form
@@ -118,97 +107,43 @@ export default function NewNotePage() {
         width: "100%"
       }}
     >
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Title: </span>
-          <input
-            ref={titleRef}
-            name="title"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.title ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.title ? "title-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.title ? (
-          <div className="pt-1 text-red-700" id="title-error">
-            {actionData.errors.title}
-          </div>
-        ) : null}
-      </div>
+      <Input
+        name={"title"}
+        inputSettings={{ variant: "input" }}
+        label={"Title"}
+        id={"title"}
+        error={actionData?.errors?.title}
+        placeholder={"Enter title"}
+      />
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Photo: </span>
-          <input
-            ref={photoRef}
-            name="file"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.file ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.file ? "file-error" : undefined
-            }
-            type="file"
-            accept="image/png, image/jpeg, image/jpg"
-          />
-        </label>
-        {actionData?.errors?.file ? (
-          <div className="pt-1 text-red-700" id="file-error">
-            {actionData.errors.file}
-          </div>
-        ) : null}
-      </div>
+      <FileUpload
+        name={"file"}
+        id={"file"}
+        label={"Photo"}
+        error={actionData?.errors?.file}
+        placeholder={"Select your photo"}
+      />
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Body: </span>
-          <textarea
-            ref={bodyRef}
-            name="body"
-            rows={8}
-            className="w-full flex-1 rounded-md border-2 border-blue-500 px-3 py-2 text-lg leading-6"
-            aria-invalid={actionData?.errors?.body ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.body ? "body-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.body ? (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.body}
-          </div>
-        ) : null}
-      </div>
+      <TinymceEditor
+        name={"body"}
+        error={actionData?.errors?.body}
+      />
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>Tags: </span>
-          <textarea
-            ref={tagsRef}
-            name="tags"
-            rows={3}
-            className="w-full flex-1 rounded-md border-2 border-blue-500 px-3 py-2 text-lg leading-6"
-            aria-invalid={actionData?.errors?.tags ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.tags ? "tags-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.tags ? (
-          <div className="pt-1 text-red-700" id="tags-error">
-            {actionData.errors.tags}
-          </div>
-        ) : null}
-      </div>
+      <TagsInput
+        id={"tags"}
+        error={actionData?.errors?.tags}
+        name={"tags"}
+        label={"Tags"}
+      />
 
-      <div className="text-right">
-        <button
-          type="submit"
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
+      <div className="text-right mt-10">
+        <Button
+          variant={"primary"}
+          loading={isLoading}
+          isSubmit
         >
           Save
-        </button>
+        </Button>
       </div>
     </Form>
   );

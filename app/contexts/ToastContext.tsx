@@ -12,7 +12,7 @@ export type TToastPosition = 'top-right' | 'top-left' | 'bottom-left' | 'bottom-
 interface ToastContextProps {
   toasts: ToastProps[];
   position: TToastPosition;
-  addToast: ({variant, closeAfter, message, position}: Omit<ToastProps, "id">) => void;
+  addToast: ({variant, closeAfter, message}: Omit<ToastProps, "id" | "timerId">) => void;
   removeToast: (id: number) => void;
 }
 

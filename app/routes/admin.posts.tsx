@@ -1,11 +1,10 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData, useNavigation } from "@remix-run/react";
+import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { getPostListItems } from "~/models/posts.server";
 import { requireUserId } from "~/session.server";
 import Header from "~/components/Header/Header";
-import Spinner from "~/components/Spinner/Spinner";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);

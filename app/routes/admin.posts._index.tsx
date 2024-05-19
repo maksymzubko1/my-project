@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 
-export default function NoteIndexPage() {
+export default function PostIndexPage() {
   return (
     <p>
       No post selected. Select a post on the left, or{" "}

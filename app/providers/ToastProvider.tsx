@@ -24,7 +24,7 @@ export const ToastProvider = ({ children, closeAfter, position }: ToastProviderP
     });
   }, []);
 
-  const addToast = useCallback(({variant, closeAfter: closeAfterProp, message}: Omit<ToastProps, "id">) => {
+  const addToast = useCallback(({variant, closeAfter: closeAfterProp, message}: Omit<ToastProps, "id" | "timerId">) => {
     const id = idCounter;
     const closeAfter = closeAfterProp ?? closeAfterValue;
 

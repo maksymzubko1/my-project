@@ -104,11 +104,11 @@ export async function updatePost(postId: Post["id"], {
     }
   };
 
-  if (image) {
-    if (post.image) {
-      await deleteMedia({ id: post.image.id });
-    }
+  if(post?.image?.id){
+    await deleteMedia({ id: post.image.id });
+  }
 
+  if (image) {
     postData.image = {
       create: {
         url: image

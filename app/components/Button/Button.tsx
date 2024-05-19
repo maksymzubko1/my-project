@@ -14,6 +14,7 @@ interface ButtonProps {
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
+  formMethod?: "post" | "put" | "delete" | "get";
 }
 
 const buttonStyles = {
@@ -24,7 +25,17 @@ const buttonStyles = {
   "secondary-2": "bg-slate-600 text-blue-100 hover:bg-blue-500 active:bg-blue-600 disabled:opacity-25 disabled:transform-none disabled:pointer-events-none"
 };
 
-const Button = ({ isSubmit, children, variant, onClick, link, fullWidth, loading, disabled }: ButtonProps) => {
+const Button = ({
+                  isSubmit,
+                  formMethod,
+                  children,
+                  variant,
+                  onClick,
+                  link,
+                  fullWidth,
+                  loading,
+                  disabled
+                }: ButtonProps) => {
   if (link) {
     return (
       <Link
@@ -41,6 +52,7 @@ const Button = ({ isSubmit, children, variant, onClick, link, fullWidth, loading
 
   return (
     <button
+      formMethod={formMethod}
       type={isSubmit ? "submit" : undefined}
       onClick={() => onClick?.()}
       disabled={loading || disabled}

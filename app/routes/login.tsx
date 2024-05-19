@@ -13,7 +13,6 @@ import Button from "~/components/Button/Button";
 import Input from "~/components/Input/Input";
 import HiddenInput from "~/components/Input/HiddenInput";
 import useFormLoading from "~/hooks/useFormLoading";
-import { useToast } from "~/hooks/useToast";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -72,16 +71,10 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/admin/posts";
   const actionData = useActionData<typeof action>();
-  const {addToast} = useToast();
   const isLoading = useFormLoading();
 
   return (
     <div className="flex min-h-full flex-col justify-center">
-      <Button variant={"primary"} onClick={() => {
-        addToast({ variant: "warning", message: "Error" })
-      }}>
-        click
-      </Button>
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6">
           <Input

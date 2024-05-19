@@ -16,9 +16,16 @@ import invariant from "tiny-invariant";
 
 import { deletePost, getPost, updatePost } from "~/models/posts.server";
 import { requireUserId } from "~/session.server";
-import { useEffect, useRef } from "react";
 import AwsService from "~/services/aws.service";
 import Spinner from "~/components/Spinner/Spinner";
+import Input from "~/components/Input/Input";
+import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
+import Button from "~/components/Button/Button";
+import useFormLoading from "~/hooks/useFormLoading";
+import FileUpload from "~/components/FileUpload/FileUpload";
+import TagsInput from "~/components/Input/TagsInput";
+import { useEffect } from "react";
+import { useToast } from "~/hooks/useToast";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
@@ -116,38 +123,28 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   }
 };
 
-export default function NoteDetailsPage() {
+export default function PostDetailsPage() {
   const actionData = useActionData<typeof action>();
   const data = useLoaderData<typeof loader>();
+  const {addToast} = useToast();
 
   const navigation = useNavigation();
-  const isLoading = ["loading", "submitting"].includes(navigation.state);
+  const isLoading = useFormLoading();
   const isFetchingContent = navigation.state === "loading"
     && navigation.formMethod !== "POST";
-
-  const titleEditRef = useRef<HTMLInputElement>(null);
-  const bodyEditRef = useRef<HTMLTextAreaElement>(null);
-  const photoEditRef = useRef<HTMLInputElement>(null);
-  const tagsEditRef = useRef<HTMLTextAreaElement>(null);
 
   const post = actionData?.updatedPost || data.post;
 
   useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleEditRef.current?.focus();
-    } else if (actionData?.errors?.body) {
-      bodyEditRef.current?.focus();
-    } else if (actionData?.errors?.file) {
-      photoEditRef.current?.focus();
-    } else if (actionData?.errors?.tags) {
-      tagsEditRef.current?.focus();
+    if(actionData?.updatedPost){
+      addToast({variant: 'success', message: 'Post updated successfully'});
     }
   }, [actionData]);
 
-  if(isFetchingContent){
+  if (isFetchingContent) {
     return (
-      <Spinner size={"medium"}/>
-    )
+      <Spinner size={"medium"} />
+    );
   }
 
   return (
@@ -160,111 +157,55 @@ export default function NoteDetailsPage() {
               gap: 8,
               width: "100%"
             }}>
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Title: </span>
-            <input
-              defaultValue={post.title}
-              ref={titleEditRef}
-              name="title"
-              className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-              aria-invalid={actionData?.errors?.title ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.title ? "title-error" : undefined
-              }
-            />
-          </label>
-          {actionData?.errors?.title ? (
-            <div className="pt-1 text-red-700" id="title-error">
-              {actionData.errors.title}
-            </div>
-          ) : null}
-        </div>
+        <Input
+          name={"title"}
+          inputSettings={{ variant: "input" }}
+          label={"Title"}
+          id={"title"}
+          error={actionData?.errors?.title}
+          initialValue={post?.title}
+        />
 
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Photo: </span>
-            <input
-              ref={photoEditRef}
-              name="file"
-              className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-              aria-invalid={actionData?.errors?.file ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.file ? "file-error" : undefined
-              }
-              type="file"
-              accept="image/png, image/jpeg, image/jpg"
-            />
-          </label>
-          {actionData?.errors?.file ? (
-            <div className="pt-1 text-red-700" id="file-error">
-              {actionData.errors.file}
-            </div>
-          ) : null}
-        </div>
+        <FileUpload
+          name={"file"}
+          id={"file"}
+          label={"Photo"}
+          error={actionData?.errors?.file}
+          initialValue={post?.image?.url}
+          placeholder={"Select your photo"}
+        />
 
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Body: </span>
-            <textarea
-              defaultValue={post.body}
-              ref={bodyEditRef}
-              name="body"
-              rows={8}
-              className="w-full flex-1 rounded-md border-2 border-blue-500 px-3 py-2 text-lg leading-6"
-              aria-invalid={actionData?.errors?.body ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.body ? "body-error" : undefined
-              }
-            />
-          </label>
-          {actionData?.errors?.body ? (
-            <div className="pt-1 text-red-700" id="body-error">
-              {actionData.errors.body}
-            </div>
-          ) : null}
-        </div>
+        <TinymceEditor
+          name={"body"}
+          initialValue={post?.body}
+          error={actionData?.errors?.body}
+        />
 
-        <div>
-          <label className="flex w-full flex-col gap-1">
-            <span>Tags: </span>
-            <textarea
-              ref={tagsEditRef}
-              name="tags"
-              rows={3}
-              defaultValue={post.tagPost.map(_tag => _tag.tag.name).join(", ")}
-              className="w-full flex-1 rounded-md border-2 border-blue-500 px-3 py-2 text-lg leading-6"
-              aria-invalid={actionData?.errors?.tags ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.tags ? "tags-error" : undefined
-              }
-            />
-          </label>
-          {actionData?.errors?.tags ? (
-            <div className="pt-1 text-red-700" id="tags-error">
-              {actionData.errors.tags}
-            </div>
-          ) : null}
-        </div>
+        <TagsInput
+          id={"tags"}
+          error={actionData?.errors?.tags}
+          initialValue={post.tagPost}
+          name={"tags"}
+          label={"Tags"}
+        />
 
-        <div className="flex justify-between items-center">
-          <button
-            disabled={isLoading}
-            type="submit"
+        <div className="flex justify-between items-center mt-10">
+          <Button
             formMethod={"delete"}
-            className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400 disabled:opacity-25"
+            variant={"destructive"}
+            disabled={isLoading}
+            isSubmit
           >
             Delete
-          </button>
-
-          <button
-            disabled={isLoading}
-            type="submit"
+          </Button>
+          <Button
             formMethod={"post"}
-            className="rounded bg-blue-500 px-4 py-2 text-white disabled:opacity-25"
+            variant={"primary"}
+            loading={isLoading}
+            isSubmit
           >
             Save
-          </button>
+          </Button>
         </div>
       </Form>
     </div>
@@ -283,7 +224,7 @@ export function ErrorBoundary() {
   }
 
   if (error.status === 404) {
-    return <div>Note not found</div>;
+    return <div>Post not found</div>;
   }
 
   return <div>An unexpected error occurred: {error.statusText}</div>;
