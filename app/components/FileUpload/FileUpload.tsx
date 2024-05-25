@@ -8,14 +8,27 @@ interface FileUploadProps {
   placeholder?: string;
   id: string;
   fullWidth?: boolean;
+  value?: string;
+  onChange?: (value: File | null) => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ label, fullWidth, id, name, initialValue, error, placeholder }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+                                                 value,
+                                                 onChange,
+                                                 label,
+                                                 fullWidth,
+                                                 id,
+                                                 name,
+                                                 initialValue,
+                                                 error,
+                                                 placeholder
+                                               }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialValue || null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target?.files[0] : null;
     if (selectedFile) {
+      onChange?.(selectedFile);
       const objectUrl = URL.createObjectURL(selectedFile);
       setPreviewUrl(objectUrl);
     } else {
@@ -24,6 +37,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, fullWidth, id, name, ini
   };
 
   const handleRemoveFile = () => {
+    onChange?.(null);
     setPreviewUrl(null);
   };
 
@@ -45,10 +59,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, fullWidth, id, name, ini
         }
         className={`block cursor-pointer ${fullWidth ? "w-full " : ""}text-sm transition-all text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-500 file:text-sm file:font-semibold file:bg-transparent file:text-blue-700 hover:file:bg-blue-100`}
       />
-      {previewUrl && (
+      {previewUrl || value && (
         <div className="image-preview mt-4 relative w-fit">
-          <img src={previewUrl} alt="Preview" className="w-32 h-32 object-cover rounded-md shadow-md" />
+          <img src={previewUrl || value} alt="Preview" className="w-32 h-32 object-cover rounded-md shadow-md" />
           <button
+            type="button"
             onClick={handleRemoveFile}
             className="absolute top-1 right-1 text-red-700 bg-white p-1 rounded-md"
           >

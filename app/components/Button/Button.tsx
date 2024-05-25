@@ -53,7 +53,7 @@ const Button = ({
   return (
     <button
       formMethod={formMethod}
-      type={isSubmit ? "submit" : undefined}
+      type={isSubmit ? "submit" : "button"}
       onClick={() => onClick?.()}
       disabled={loading || disabled}
       className={`${fullWidth ? "w-full" : ""} transition-all rounded px-4 py-2 ${buttonStyles[variant]}`}

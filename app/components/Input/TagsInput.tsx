@@ -1,66 +1,51 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import HiddenInput from "~/components/Input/HiddenInput";
 
 interface TagsInputProps {
   error?: string;
   name: string;
   id: string;
-  initialValue?: { tag: { name: string } }[];
   fullWidth?: boolean;
   label?: string;
+
+  value: string[];
+  onChange: (value: string[]) => void;
 }
 
-interface TagId {
-  id: number;
-  tag: string;
-}
-
-const TagsInput = ({ error, name, id, initialValue, fullWidth, label }: TagsInputProps) => {
-  const [tags, setTags] = useState<TagId[]>([]);
+const TagsInput = ({ error, name, id, fullWidth, label, onChange, value }: TagsInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [lastId, setLastId] = useState<number>(0);
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   }, []);
 
-  const handleTagRemove = useCallback((e, id: number) => {
-    setTags(prev => prev.filter(tag => tag.id !== id));
-  }, []);
+  const handleTagRemove = useCallback((e, tag: string) => {
+    onChange(value.filter(_tag => _tag !== tag))
+  }, [onChange, value]);
 
   const handleTagAdd = useCallback((e) => {
     const newTag = inputValue.trim();
-    if (newTag !== "") {
-      const id = lastId + 1;
-      setLastId(id);
-      setTags(prev => [...prev, { id: id, tag: newTag }]);
+    if (newTag !== "" && !value.includes(newTag)) {
+      onChange([...value, newTag]);
       setInputValue("");
     }
-  }, [inputValue, lastId]);
-
-  useEffect(() => {
-    if (initialValue && !error) {
-      let id = lastId;
-      setTags(initialValue.map(tagObject => ({ id: id++, tag: tagObject.tag.name })));
-      setLastId(id);
-    }
-  }, [initialValue, error]);
+  }, [inputValue, onChange, value]);
 
   return (
     <div className={`${fullWidth ? "w-full " : ""}flex flex-col gap-1`}>
-      <HiddenInput name={name} value={tags.map(tag=>tag.tag).join(",")} />
+      <HiddenInput name={name} value={value.join(",")} />
       {label && <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>}
       <div className="tags-input flex-1 rounded-md text-lg">
         <ul className="tags-list flex gap-2 flex-wrap items-center">
-          {tags.map((tag, index) => (
+          {value.map((tag, index) => (
             <li key={index} className="tag px-2 py-1 bg-blue-200 rounded-md flex gap-2">
-              {tag.tag}
+              {tag}
               <button
                 type={"button"}
                 className="tag-remove ms-3 transition-all hover:text-red-700"
-                onClick={(event) => handleTagRemove(event, tag.id)}>
+                onClick={(event) => handleTagRemove(event, tag)}>
                 &#x2715;
               </button>
             </li>

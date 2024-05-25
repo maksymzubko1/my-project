@@ -1,6 +1,6 @@
 import React, { HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute, useEffect, useRef } from "react";
 
-const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSettings, label, id, value }: InputProps) => {
+const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSettings, label, id, value, onChange }: InputProps) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       required={inputSettings.required}
       autoComplete={inputSettings.autoComplete}
       autoFocus={inputSettings.autoFocus}
-      defaultValue={initialValue ?? ""}
+      defaultValue={initialValue ?? undefined}
       placeholder={placeholder}
       value={value || undefined}
       className={`flex-1 rounded-md border border-gray-500 px-2 py-1 text-lg`}
@@ -26,13 +26,14 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       aria-describedby={
         error ? `${name}-error` : undefined
       }
+      onChange={(event) => onChange?.(event.target.value)}
     />
   ) : (
     <input
       id={id}
       ref={inputRef}
       name={name}
-      defaultValue={initialValue ?? ""}
+      defaultValue={initialValue ?? undefined}
       value={value || undefined}
       type={inputSettings.type}
       required={inputSettings.required}
@@ -44,6 +45,7 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       aria-describedby={
         error ? `${name}-error` : undefined
       }
+      onChange={(event) => onChange?.(event.target.value)}
     />
   );
 
@@ -77,6 +79,7 @@ interface InputProps {
     autoFocus?: boolean;
     autoComplete?: HTMLInputAutoCompleteAttribute;
   };
+  onChange?: (value: string) => void;
   placeholder?: string;
   label?: string;
   value?: string;

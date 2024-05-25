@@ -20,7 +20,9 @@ const ToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
       }}
       className="group relative inline-block"
     >
+      <span className="cursor-pointer">
       {children}
+      </span>
       {tooltip ? (
         <span
           ref={tooltipRef}

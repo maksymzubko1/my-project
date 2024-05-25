@@ -2,6 +2,7 @@ import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
+import { MemoryUploadHandlerOptions, UploadHandler, UploadHandlerPart } from "@remix-run/node";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -91,4 +92,39 @@ export async function asyncIterableToFile(
   const file = new File([blob as BlobPart], fileName, { type: fileType });
 
   return file;
+}
+
+export function createCustomMemoryUploadHandler({
+                                                  filter,
+                                                  maxPartSize = 3000000,
+                                                }: MemoryUploadHandlerOptions = {}): UploadHandler {
+  return async ({ filename, contentType, name, data }: UploadHandlerPart) => {
+    if (
+      filter &&
+      !(await filter({
+        filename,
+        contentType,
+        name,
+      }))
+    ) {
+      return undefined;
+    }
+    let size = 0;
+    let chunks = [];
+    for await (let chunk of data) {
+      size += chunk.byteLength;
+      if (size > maxPartSize) {
+        return 'error: file too large';
+      }
+      chunks.push(chunk);
+    }
+    if (typeof filename === 'string') {
+      return new File(chunks, filename, {
+        type: contentType,
+      });
+    }
+    return await new Blob(chunks, {
+      type: contentType,
+    }).text();
+  };
 }
