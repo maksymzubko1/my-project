@@ -1,6 +1,6 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useFetcher} from "@remix-run/react";
-import {HTMLFormMethod} from "@remix-run/router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useFetcher } from "@remix-run/react";
+import { HTMLFormMethod } from "@remix-run/router";
 
 type IgnoreFields<T> = (keyof T)[];
 
@@ -14,12 +14,12 @@ type EncType =
   "multipart/form-data"
 
 type OnChangeFunction<T> = (value: T[keyof T], field: keyof T) => void;
-type OnSubmitFunction<T> = (values: T, {methodType, encType}?: {
+type OnSubmitFunction<T> = (values: T, { methodType, encType }?: {
   methodType?: HTMLFormMethod,
   encType?: EncType
 }) => void;
 
-const useFormState = <T extends FormState<T>>(initialState: T, {ignoreFields, syncOnUpdate}: {
+const useFormState = <T extends FormState<T>>(initialState: T, { ignoreFields, syncOnUpdate }: {
   ignoreFields?: IgnoreFields<T>,
   syncOnUpdate?: boolean
 } = {}) => {
@@ -55,7 +55,7 @@ const useFormState = <T extends FormState<T>>(initialState: T, {ignoreFields, sy
         });
       }
 
-      if(hasRelevantChange) {
+      if (hasRelevantChange) {
         setState(initialState);
       }
 
@@ -64,18 +64,18 @@ const useFormState = <T extends FormState<T>>(initialState: T, {ignoreFields, sy
   }, [initialState, syncOnUpdate]);
 
   const onChange: OnChangeFunction<T> = useCallback((value, field) => {
-    setState(prev => ({...prev, [field]: value}));
-  }, [state])
+    setState(prev => ({ ...prev, [field]: value }));
+  }, []);
 
   const reset = useCallback(() => {
     setState(initialState);
-  }, [initialState])
+  }, [initialState]);
 
-  const onSubmit: OnSubmitFunction<any> = useCallback((values, params) => {
-    if (fetcher.state === 'idle') {
+  const onSubmit: OnSubmitFunction<any> = useCallback((values, params, shouldRerender = true) => {
+    if (fetcher.state === "idle") {
       fetcher.submit(values, {
-        method: params?.methodType || 'POST',
-        encType: params?.encType || 'application/x-www-form-urlencoded',
+        method: params?.methodType || "POST",
+        encType: params?.encType || "application/x-www-form-urlencoded"
       });
     }
   }, [fetcher]);
@@ -85,11 +85,11 @@ const useFormState = <T extends FormState<T>>(initialState: T, {ignoreFields, sy
       state,
       initialState,
       data: fetcher.data,
-      isLoading: fetcher.state === 'loading' || fetcher.state === 'submitting',
+      isLoading: fetcher.state === "loading" || fetcher.state === "submitting",
       onChange,
       onSubmit,
       isDirty,
-      reset,
+      reset
     }
   );
 };

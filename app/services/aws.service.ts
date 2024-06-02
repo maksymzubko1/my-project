@@ -2,6 +2,8 @@ import { PutObjectCommand, S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 import { Upload } from "@aws-sdk/lib-storage";
+import path from "node:path";
+import axios from "axios";
 
 class AwsService {
   client: S3Client;
@@ -51,6 +53,38 @@ class AwsService {
     } catch (err) {
       console.log(err);
       return {error: err?.message || "Unhandled error AWS service"}
+    }
+  }
+
+  async uploadFileFromUrlToS3(fileUrl: string, key?: string) {
+    try {
+      const response = await axios({
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'stream'
+      });
+
+      const fileExtension = path.extname(fileUrl);
+
+      const s3FileName = `uploaded-file${fileExtension}`;
+
+      const client = this.client;
+
+      const upload = new Upload({
+        client,
+        params: {
+          Bucket: process.env.AWS_BUCKET,
+          Key: key ? `${key}_${s3FileName}` : `${uuidv4()}_${s3FileName}`,
+          Body: response.data,
+        },
+      });
+
+      const res = await upload.done();
+
+      return res?.Location;
+    } catch (err) {
+      // console.error('Error uploading file:', err);
+      throw err;
     }
   }
 }

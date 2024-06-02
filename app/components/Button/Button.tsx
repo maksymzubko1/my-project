@@ -14,6 +14,7 @@ interface ButtonProps {
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
+  formAction?: string;
   formMethod?: "post" | "put" | "delete" | "get";
 }
 
@@ -34,7 +35,8 @@ const Button = ({
                   link,
                   fullWidth,
                   loading,
-                  disabled
+                  disabled,
+                  formAction
                 }: ButtonProps) => {
   if (link) {
     return (
@@ -52,6 +54,7 @@ const Button = ({
 
   return (
     <button
+      formAction={formAction}
       formMethod={formMethod}
       type={isSubmit ? "submit" : "button"}
       onClick={() => onClick?.()}

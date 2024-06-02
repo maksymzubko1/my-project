@@ -1,4 +1,9 @@
-import type { ActionFunctionArgs, MemoryUploadHandlerFilterArgs, MetaFunction } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MemoryUploadHandlerFilterArgs,
+  MetaFunction
+} from "@remix-run/node";
 import {
   json,
   redirect,
@@ -6,17 +11,16 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData
 } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
 
 import { createPost } from "~/models/posts.server";
 import { requireUserId } from "~/session.server";
 import AwsService from "~/services/aws.service";
-import Input from "~/components/Input/Input";
-import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
-import Button from "~/components/Button/Button";
-import useFormLoading from "~/hooks/useFormLoading";
-import FileUpload from "~/components/FileUpload/FileUpload";
-import TagsInput from "~/components/Input/TagsInput";
+import useFormState from "~/hooks/useFormState";
+import { PostFormContext, PostFormState } from "~/contexts/PostContext";
+import { useToast } from "~/hooks/useToast";
+import { useCallback } from "react";
+import Form from "~/routes/admin.posts.new/form";
+import { useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: "Admin - New Post" }];
 
@@ -92,59 +96,53 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return redirect(`/admin/posts/${post.id}`);
 };
 
-export default function NewNotePage() {
-  const actionData = useActionData<typeof action>();
-  const isLoading = useFormLoading();
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return {post: { body: "", tags: [] as string[], title: "", image: undefined, localFile: null }}
+};
+
+export default function NewPostPage() {
+  const {post} = useLoaderData<typeof loader>();
+
+  const {
+    state,
+    data,
+    isLoading,
+    onChange,
+    onSubmit,
+    isDirty
+  } = useFormState<PostFormState>({ ...post, localFile: null, image: undefined}, {
+    ignoreFields: ["localFile"],
+    syncOnUpdate: true
+  });
+
+  useToast(data);
+
+  const onSubmitFunction = useCallback((_, action?: string) => {
+    const formData = new FormData();
+
+    Object.entries(state).forEach(([key, value]) => {
+      if (key === "file") {
+        formData.set(key, value as Blob);
+      } else {
+        formData.set(key, value as string);
+      }
+    });
+
+    onSubmit(formData, { encType: "multipart/form-data" });
+  }, [state]);
 
   return (
-    <Form
-      encType={"multipart/form-data"}
-      method="post"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        width: "100%"
-      }}
-    >
-      <Input
-        name={"title"}
-        inputSettings={{ variant: "input" }}
-        label={"Title"}
-        id={"title"}
-        error={actionData?.errors?.title}
-        placeholder={"Enter title"}
-      />
-
-      <FileUpload
-        name={"file"}
-        id={"file"}
-        label={"Photo"}
-        error={actionData?.errors?.file}
-        placeholder={"Select your photo"}
-      />
-
-      <TinymceEditor
-        name={"body"}
-        error={actionData?.errors?.body}
-      />
-
-      <TagsInput
-        id={"tags"}
-        error={actionData?.errors?.tags}
-        name={"tags"}
-        label={"Tags"}
-      />
-
-      <div className="text-right mt-10">
-        <Button
-          variant={"primary"}
-          loading={isLoading}
-          isSubmit
-        >
-          Save
-        </Button>
-      </div>
-    </Form>
+    <div>
+      <PostFormContext.Provider value={{
+        isLoading,
+        onSubmit: onSubmitFunction,
+        values: state,
+        extras: { isDirty },
+        errors: data?.errors,
+        onChange
+      }}>
+        <Form />
+      </PostFormContext.Provider>
+    </div>
   );
 }

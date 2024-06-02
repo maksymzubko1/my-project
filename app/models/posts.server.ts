@@ -48,8 +48,9 @@ export async function createPost({
                                    body,
                                    title,
                                    image,
-                                   tags
-                                 }: Pick<Post, "body" | "title"> & { tags: Tag["name"][] } & {
+                                   tags,
+                                   createdAt
+                                 }: Pick<Post, "body" | "title"> & {createdAt?: Post['createdAt']} & { tags: Tag["name"][] } & {
   image?: string;
 }): Promise<Post> {
   const createdTags = await createTags({ tags });
@@ -72,6 +73,10 @@ export async function createPost({
         url: image
       }
     };
+  }
+
+  if (createdAt) {
+    postData.createdAt = createdAt;
   }
 
   return prisma.post.create({

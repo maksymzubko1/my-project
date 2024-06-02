@@ -33,13 +33,13 @@ const TagsInput = ({ error, name, id, fullWidth, label, onChange, value }: TagsI
 
   return (
     <div className={`${fullWidth ? "w-full " : ""}flex flex-col gap-1`}>
-      <HiddenInput name={name} value={value.join(",")} />
+      <HiddenInput name={name} value={value.join(",") || ""} />
       {label && <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>}
       <div className="tags-input flex-1 rounded-md text-lg">
         <ul className="tags-list flex gap-2 flex-wrap items-center">
-          {value.map((tag, index) => (
+          {value?.map((tag, index) => (
             <li key={index} className="tag px-2 py-1 bg-blue-200 rounded-md flex gap-2">
               {tag}
               <button

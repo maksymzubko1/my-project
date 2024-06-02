@@ -34,11 +34,12 @@ model Password {
 }
 
 model Post {
-  id        String  @id @default(cuid())
-  title     String
-  body      String
-  image     Media?
-  isDeleted Boolean @default(false)
+  id          String  @id @default(cuid())
+  title       String
+  body        String
+  description String
+  image       Media?
+  isDeleted   Boolean @default(false)
 
   tagPost TagPost[]
 
@@ -82,4 +83,7 @@ model RSSSettings {
   stopTags      String[] @default([])
   fieldMatching Json
   isPaused      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
