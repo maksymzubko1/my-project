@@ -3,9 +3,9 @@ import Input from "~/components/Input/Input";
 import FileUpload from "~/components/FileUpload/FileUpload";
 import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
 import TagsInput from "~/components/Input/TagsInput";
-import Button from "~/components/Button/Button";
 import { PostFormContext } from "~/contexts/PostContext";
 import { Form as RemixForm } from "@remix-run/react";
+import Button from "~/components/Button/Button";
 
 const Form = () => {
   const {
@@ -13,10 +13,14 @@ const Form = () => {
     extras, onChange, onSubmit, values, errors
   } = useContext(PostFormContext);
 
-  const onSubmitFunction = useCallback((event: FormEvent<HTMLFormElement> | null, action?: "soft_delete" | "delete") => {
+  const onSubmitFunction = useCallback((event: FormEvent<HTMLFormElement> | null, action?: "draft") => {
     event?.preventDefault();
     onSubmit(event, action);
   }, [onSubmit]);
+
+  const handleClickDraft = useCallback(() => {
+    onSubmitFunction(null, "draft");
+  }, [onSubmitFunction]);
 
   return (
     <RemixForm
@@ -54,6 +58,16 @@ const Form = () => {
         onChange={(value) => onChange(value, "body")}
       />
 
+      <Input
+        name={"description"}
+        inputSettings={{ variant: "textarea" }}
+        label={"Description"}
+        id={"description"}
+        error={errors?.description}
+        value={values.description}
+        onChange={(value) => onChange(value, "description")}
+      />
+
       <TagsInput
         id={"tags"}
         error={errors?.tags}
@@ -63,15 +77,23 @@ const Form = () => {
         onChange={(value) => onChange(value, "tags")}
       />
 
-      <div className="flex justify-end items-center mt-10">
+      <div className="flex justify-end gap-2 items-center mt-10">
         <Button
           formMethod={"post"}
-          variant={"primary"}
+          variant="primary"
           disabled={!extras?.isDirty}
-          loading={isLoading}
           isSubmit
         >
           Save
+        </Button>
+        <Button
+          formMethod={"post"}
+          formAction={"draft"}
+          variant="secondary-2"
+          disabled={!extras?.isDirty}
+          onClick={handleClickDraft}
+        >
+          Save as Draft
         </Button>
       </div>
     </RemixForm>

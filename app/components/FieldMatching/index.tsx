@@ -20,9 +20,10 @@ const FieldMatching = ({fields, availableKeys, onChange}: FieldMatchingProps) =>
   return (
     <div className={"w-[400px] flex flex-col items-center gap-2"}>
       {Object.entries(fields).map(([key, value]) =>
-        <div className={"flex justify-between"}>
-          <Select label={""} disabled onChange={() => {}} items={dbKeys} value={key} />
-          <Select label={""} onChange={(_value) => onLocalChange(key, _value)} items={keys} value={value} />
+        <div className={"w-full flex justify-between items-center"}>
+          <Select key={`${new Date().valueOf()}-1`} label={""} disabled onChange={() => {}} items={dbKeys} value={key} />
+          -
+          <Select key={`${new Date().valueOf()}-2`} label={""} onChange={(_value) => onLocalChange(key, _value)} items={keys} value={value} />
         </div>
       )}
     </div>

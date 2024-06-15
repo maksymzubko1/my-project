@@ -1,4 +1,6 @@
 import React, { HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute, useEffect, useRef } from "react";
+import { Textarea } from "~/components/shadcn/ui/textarea";
+import {Input as InputShadcn} from "~/components/shadcn/ui/input";
 
 const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSettings, label, id, value, onChange }: InputProps) => {
   const inputRef = useRef(null);
@@ -10,7 +12,7 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
   }, [error, inputRef.current]);
 
   const inputComponent = inputSettings.variant === "textarea" ? (
-    <textarea
+    <Textarea
       id={id}
       ref={inputRef}
       name={name}
@@ -21,7 +23,6 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       defaultValue={initialValue ?? undefined}
       placeholder={placeholder}
       value={value || undefined}
-      className={`flex-1 rounded-md border border-gray-500 px-2 py-1 text-lg`}
       aria-invalid={!!error}
       aria-describedby={
         error ? `${name}-error` : undefined
@@ -29,7 +30,7 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       onChange={(event) => onChange?.(event.target.value)}
     />
   ) : (
-    <input
+    <InputShadcn
       id={id}
       ref={inputRef}
       name={name}
@@ -39,7 +40,6 @@ const Input = ({ name, error, fullWidth, placeholder, initialValue, inputSetting
       required={inputSettings.required}
       autoComplete={inputSettings.autoComplete}
       autoFocus={inputSettings.autoFocus}
-      className={`flex-1 rounded-md border border-gray-500 px-2 py-1 text-lg`}
       aria-invalid={!!error}
       placeholder={placeholder}
       aria-describedby={

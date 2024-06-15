@@ -6,8 +6,8 @@ import SortOrder = Prisma.SortOrder;
 import { clearTags, createTags } from "~/models/tags.server";
 import { deleteMedia } from "~/models/media.server";
 
-export type { Post } from "@prisma/client";
-type PostType = Pick<Post, "id" | "body" | "title"> & {
+export type { Post, PostType } from "@prisma/client";
+type PostType = Pick<Post, "id" | "body" | "title" | "description" | "status"> & {
   image: Pick<Media, "url" | "id"> | null;
   tagPost: { tag: Pick<Tag, "name"> }[]
 };
@@ -16,7 +16,7 @@ export async function getPost({ id }: Pick<Post, "id">):
   Promise<PostType> {
   return prisma.post.findFirst({
     select: {
-      id: true, body: true, title: true,
+      id: true, body: true, title: true, description: true, status: true,
       image: {
         select: {
           id: true,
@@ -28,7 +28,7 @@ export async function getPost({ id }: Pick<Post, "id">):
           tag: {
             select: {
               name: true
-            },
+            }
           }
         }
       }
@@ -37,10 +37,51 @@ export async function getPost({ id }: Pick<Post, "id">):
   });
 }
 
-export async function getPostListItems(): Promise<Pick<Post, "id" | "title">[]> {
+export async function getPostListItems({ sort, query }: {
+  sort?: string | null,
+  query?: string | null
+}): Promise<Pick<Post, "id" | "title" | "status" | "isDeleted">[]> {
+  let orderBy: any = { updatedAt: SortOrder.desc };
+  let where: any = {};
+
+  if (sort && sort.split("_").length === 2) {
+    const sortBy = sort.split("_");
+    switch (sortBy[0]) {
+      case "id":
+        orderBy = { id: sortBy[1] };
+        break;
+      case "name":
+        orderBy = { title: sortBy[1] };
+        break;
+      case "date":
+        orderBy = { updatedAt: sortBy[1] };
+        break;
+    }
+  }
+
+  if (query && query.length > 0) {
+    where = {
+      OR: [
+        { title: { contains: query } },
+        { body: { contains: query } },
+        { description: { contains: query } },
+        {
+          tagPost: {
+            some: {
+              tag: {
+                name: { equals: query }
+              }
+            }
+          }
+        }
+      ]
+    };
+  }
+
   return prisma.post.findMany({
-    select: { id: true, title: true },
-    orderBy: { updatedAt: SortOrder.desc }
+    select: { id: true, title: true, status: true, isDeleted: true },
+    orderBy,
+    where
   });
 }
 
@@ -49,15 +90,20 @@ export async function createPost({
                                    title,
                                    image,
                                    tags,
+                                   description,
                                    createdAt
-                                 }: Pick<Post, "body" | "title"> & {createdAt?: Post['createdAt']} & { tags: Tag["name"][] } & {
+                                 }: Pick<Post, "body" | "title" | "description"> & { createdAt?: Post["createdAt"] } & {
+  tags: Tag["name"][]
+} & {
   image?: string;
-}): Promise<Post> {
+}, isDrafted = false): Promise<Post> {
   const createdTags = await createTags({ tags });
 
   const postData: any = {
     title,
     body,
+    description,
+    status: isDrafted ? "DRAFTED" : "DEFAULT",
     tagPost: {
       create: createdTags.map((tag) => ({
         tag: {
@@ -88,8 +134,9 @@ export async function updatePost(postId: Post["id"], {
   body,
   title,
   image,
+  description,
   tags
-}: Pick<Post, "body" | "title"> & { tags: Tag["name"][] } & {
+}: Pick<Post, "body" | "title" | "description"> & { tags: Tag["name"][] } & {
   image?: string;
 }): Promise<PostType> {
   const post = await getPost({ id: postId });
@@ -99,6 +146,7 @@ export async function updatePost(postId: Post["id"], {
   const postData: any = {
     title,
     body,
+    description,
     tagPost: {
       deleteMany: {},
       create: createdTags.map((tag) => ({
@@ -109,7 +157,11 @@ export async function updatePost(postId: Post["id"], {
     }
   };
 
-  if(post?.image?.id){
+  if(post.status === "DRAFTED"){
+    postData.status = "DEFAULT";
+  }
+
+  if (post?.image?.id) {
     await deleteMedia({ id: post.image.id });
   }
 
@@ -138,11 +190,26 @@ export async function updatePost(postId: Post["id"], {
         select: {
           tag: {
             select: {
-              name: true,
+              name: true
             }
           }
         }
       }
+    }
+  });
+}
+
+export async function changePostStatus({ id, status }: Pick<Post, "id" | "status">) {
+  const post = await getPost({ id });
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  return prisma.post.update({
+    where: { id },
+    data: {
+      status: status
     }
   });
 }

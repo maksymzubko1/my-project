@@ -1,143 +1,36 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs, MemoryUploadHandlerFilterArgs } from "@remix-run/node";
 import {
-  json,
-  redirect,
-  unstable_composeUploadHandlers,
-  unstable_parseMultipartFormData
-} from "@remix-run/node";
-import {
-  isRouteErrorResponse,
-  useLoaderData,
+  isRouteErrorResponse, ShouldRevalidateFunctionArgs,
+  useLoaderData, useNavigation,
   useRouteError
 } from "@remix-run/react";
-import invariant from "tiny-invariant";
 
-import { deletePost, getPost, updatePost } from "~/models/posts.server";
-import { requireUserId } from "~/session.server";
-import AwsService from "~/services/aws.service";
 import { useToast } from "~/hooks/useToast";
-import { createCustomMemoryUploadHandler } from "~/utils";
-import useModal from "~/hooks/useModal";
-import Modal from "~/components/Modal/Modal";
 import useFormState from "~/hooks/useFormState";
 import { PostFormContext, PostFormState } from "~/contexts/PostContext";
 import Form from "~/routes/admin.posts.$postId/form";
 import { useCallback } from "react";
-import Tooltip from "~/components/Tooltip/Tooltip";
+import Spinner from "~/components/Spinner/Spinner";
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  await requireUserId(request);
-  invariant(params.postId, "postId not found");
+import {loader as routeLoader} from "./loader";
+import {action as routeAction} from "./action";
 
-  const post = await getPost({ id: params.postId });
+export const loader = routeLoader;
+export const action = routeAction;
 
-  if (!post) {
-    throw new Response("Not Found", { status: 404 });
+export function shouldRevalidate({
+                                   defaultShouldRevalidate,
+                                   actionResult
+                                 }: ShouldRevalidateFunctionArgs) {
+  if (actionResult?.errors || actionResult?.status === "error") {
+    return false;
   }
-
-  const tags = post.tagPost.map(tag => tag.tag.name);
-  return json({ post: { title: post.title, body: post.body, tags, image: post?.image?.url } });
-};
-
-export const action = async ({ params, request }: ActionFunctionArgs) => {
-  await requireUserId(request);
-  invariant(params.postId, "postId not found");
-
-  const post = await getPost({ id: params.postId });
-
-  if (!post) {
-    return json({ status: "error", message: "Not found post" }, { status: 404 });
-  }
-
-  const uploadHandler = unstable_composeUploadHandlers(
-    createCustomMemoryUploadHandler({
-      filter(args: MemoryUploadHandlerFilterArgs): boolean | Promise<boolean> {
-        if (args.contentType) {
-          return ["image/png", "image/jpeg", "image/jpg"].includes(args.contentType.toLowerCase());
-        }
-        return true;
-      },
-      maxPartSize: 3000000
-    })
-  );
-
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
-
-  const action = formData.get("action");
-
-  if (action === "delete") {
-    await deletePost({ id: params.postId });
-
-    return redirect("/admin/posts");
-  } else if (action === "soft_delete") {
-    //   TODO: soft delete
-    return json({ status: "success", message: "Post was successfully soft deleted" });
-  } else {
-    const title = formData.get("title");
-    const body = formData.get("body");
-    const image = formData.get("file");
-    const tags = formData.get("tags");
-
-    if (typeof title !== "string" || title.length === 0) {
-      return json(
-        { status: "error", errors: { body: null, title: "Title is required", file: null, tags: null } },
-        { status: 400 }
-      );
-    }
-
-    if (typeof body !== "string" || body.length === 0) {
-      return json(
-        { status: "error", errors: { body: "Body is required", title: null, file: null, tags: null } },
-        { status: 400 }
-      );
-    }
-
-    if (typeof image === "string") {
-      return json(
-        { status: "error", errors: { file: image, body: null, title: null, tags: null } },
-        { status: 400 }
-      );
-    }
-
-    if (typeof tags !== "string" || tags.length === 0) {
-      return json(
-        { status: "error", errors: { tags: "Tags is required", title: null, file: null, body: null } },
-        { status: 400 }
-      );
-    }
-
-    const tagsList = tags.split(",").map(tag => tag.trim());
-
-    if (tagsList.length === 0) {
-      return json(
-        { status: "error", errors: { tags: "Minimum 1 tag required", title: null, file: null, body: null } },
-        { status: 400 }
-      );
-    }
-
-    const uploadedFile = image
-      ? await AwsService.uploadImage(image) as string : undefined;
-
-    if (typeof uploadedFile !== "string" && uploadedFile?.error) {
-      return json(
-        { status: "error", errors: { file: uploadedFile.error, title: null, tags: null, body: null } },
-        { status: 400 }
-      );
-    }
-
-    const updatedPost = await updatePost(params.postId, {
-      body, title, image: uploadedFile, tags: tagsList
-    });
-
-    return { status: "success", updatedPost, message: "Post successfully updated" };
-  }
-};
+  return defaultShouldRevalidate;
+}
 
 export default function PostDetailsPage() {
   const { post } = useLoaderData<typeof loader>();
+
+  const navigation = useNavigation();
 
   const {
     state,
@@ -148,8 +41,8 @@ export default function PostDetailsPage() {
     onSubmit,
     isDirty,
     reset
-  } = useFormState<PostFormState>({ ...post, image: post.image, localFile: null }, {
-    ignoreFields: ["localFile"],
+  } = useFormState<PostFormState>(post, {
+    ignoreFields: ["localFile", "status"],
     syncOnUpdate: true
   });
 
@@ -163,7 +56,7 @@ export default function PostDetailsPage() {
     } else {
       formData.set("action", "edit");
       Object.entries(state).forEach(([key, value]) => {
-        if (key === "file") {
+        if (key === "image") {
           formData.set(key, value as Blob);
         } else {
           formData.set(key, value as string);
@@ -173,6 +66,12 @@ export default function PostDetailsPage() {
 
     onSubmit(formData, { encType: "multipart/form-data" });
   }, [state]);
+
+  if(navigation.state === "loading"){
+    return (
+      <Spinner size={"large"} />
+    )
+  }
 
   return (
     <div>
@@ -184,6 +83,9 @@ export default function PostDetailsPage() {
         errors: data?.errors,
         onChange
       }}>
+        {state.status === "DRAFTED" && <h2 className="w-full font-bold text-3xl mb-3">
+          Drafted
+        </h2>}
         <Form />
       </PostFormContext.Provider>
     </div>

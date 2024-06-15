@@ -30,16 +30,6 @@ const Form = () => {
         gap: 8,
         width: "100%"
       }}>
-      <Input
-        name={"name"}
-        inputSettings={{ variant: "input" }}
-        label={"Name"}
-        id={"name"}
-        error={errors?.name}
-        value={values.name}
-        onChange={(value) => onChange(value, "name")}
-      />
-
       <div className={"flex flex-col gap-3 items-start"}>
         <Input
           fullWidth
@@ -58,6 +48,16 @@ const Form = () => {
         <>
           <FieldMatching onChange={(value) => onChange(value, "fieldMatching")} availableKeys={values.keys}
                          fields={values.fieldMatching} />
+
+          <Input
+            name={"name"}
+            inputSettings={{ variant: "input" }}
+            label={"Name"}
+            id={"name"}
+            error={errors?.name}
+            value={values.name}
+            onChange={(value) => onChange(value, "name")}
+          />
 
           <TagsInput
             id={"stopTags"}

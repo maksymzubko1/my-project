@@ -69,6 +69,16 @@ const Form = () => {
         onChange={(value) => onChange(value, "body")}
       />
 
+      <Input
+        name={"description"}
+        inputSettings={{ variant: "textarea" }}
+        label={"Description"}
+        id={"description"}
+        error={errors?.description}
+        value={values.description}
+        onChange={(value) => onChange(value, "description")}
+      />
+
       <TagsInput
         id={"tags"}
         error={errors?.tags}

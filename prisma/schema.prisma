@@ -17,6 +17,12 @@ enum Interval {
   everyDay
 }
 
+enum PostType {
+  DEFAULT
+  HIDDEN
+  DRAFTED
+}
+
 model User {
   id       String    @id @default(cuid())
   email    String    @unique
@@ -37,9 +43,11 @@ model Post {
   id          String  @id @default(cuid())
   title       String
   body        String
-  description String
+  description String?
   image       Media?
-  isDeleted   Boolean @default(false)
+
+  status    PostType @default(DEFAULT)
+  isDeleted Boolean  @default(false)
 
   tagPost TagPost[]
 

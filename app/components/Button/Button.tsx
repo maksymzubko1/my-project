@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "@remix-run/react";
-import Spinner from "~/components/Spinner/Spinner";
+import { Button as ButtonShadcn } from "~/components/shadcn/ui/button";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface ButtonProps {
   isSubmit?: boolean;
@@ -53,7 +54,7 @@ const Button = ({
   }
 
   return (
-    <button
+    <ButtonShadcn
       formAction={formAction}
       formMethod={formMethod}
       type={isSubmit ? "submit" : "button"}
@@ -62,11 +63,12 @@ const Button = ({
       className={`${fullWidth ? "w-full" : ""} transition-all rounded px-4 py-2 ${buttonStyles[variant]}`}
     >
       {loading ?
-        <span className="flex justify-center">
-          <Spinner size={"medium"} />
-        </span>
+        <>
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          Loading...
+        </>
         : children}
-    </button>
+    </ButtonShadcn>
   );
 };
 

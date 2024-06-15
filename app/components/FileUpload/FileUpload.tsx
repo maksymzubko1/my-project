@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 interface FileUploadProps {
   label?: string;
@@ -25,7 +25,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                                                }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialValue || null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target?.files[0] : null;
     if (selectedFile) {
       onChange?.(selectedFile);
@@ -34,7 +34,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     } else {
       setPreviewUrl(null);
     }
-  };
+  }, [onChange]);
 
   const handleRemoveFile = () => {
     onChange?.(null);
@@ -49,7 +49,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       <input
         id={id}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/jpg"
         name={name}
         onChange={handleFileChange}
         aria-invalid={!!error}
@@ -59,7 +59,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }
         className={`block cursor-pointer ${fullWidth ? "w-full " : ""}text-sm transition-all text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-500 file:text-sm file:font-semibold file:bg-transparent file:text-blue-700 hover:file:bg-blue-100`}
       />
-      {previewUrl || value && (
+      {(previewUrl || value) && (
         <div className="image-preview mt-4 relative w-fit">
           <img src={previewUrl || value} alt="Preview" className="w-32 h-32 object-cover rounded-md shadow-md" />
           <button

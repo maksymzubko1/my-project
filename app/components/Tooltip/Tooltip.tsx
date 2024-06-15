@@ -1,37 +1,26 @@
 import { FC, ReactNode, useRef } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/shadcn/ui/tooltip";
 
 interface Props {
   children: ReactNode;
   tooltip?: string;
+  disabled?: boolean;
 }
 
-const ToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
-  const tooltipRef = useRef<HTMLSpanElement>(null);
-  const container = useRef<HTMLDivElement>(null);
+const ToolTip: FC<Props> = ({ children, tooltip, disabled }): JSX.Element => {
+  if(disabled){
+    return <>{children}</>;
+  }
 
   return (
-    <div
-      ref={container}
-      onMouseEnter={({ clientX }) => {
-        if (!tooltipRef.current || !container.current) return;
-        const { left } = container.current.getBoundingClientRect();
-
-        tooltipRef.current.style.left = clientX - left + "px";
-      }}
-      className="group relative inline-block"
-    >
-      <span className="cursor-pointer">
-      {children}
-      </span>
-      {tooltip ? (
-        <span
-          ref={tooltipRef}
-          className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all bg-blue-500 text-white p-1 rounded absolute top-full mt-2 whitespace-nowrap"
-        >
-          {tooltip}
-        </span>
-      ) : null}
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

@@ -94,6 +94,22 @@ export async function asyncIterableToFile(
   return file;
 }
 
+export function isEmpty(value: string | string[] | object | null | undefined) {
+  if(value === null || value === undefined) {
+    return true;
+  }
+
+  if (Array.isArray(value) || typeof value === "string") {
+    return value.length === 0;
+  }
+
+  if (typeof value === "object"){
+    return JSON.stringify(value) === JSON.stringify({});
+  }
+
+  return false;
+}
+
 export function createCustomMemoryUploadHandler({
                                                   filter,
                                                   maxPartSize = 3000000,
