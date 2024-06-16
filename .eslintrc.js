@@ -85,6 +85,8 @@ module.exports = {
             "newlines-between": "always",
           },
         ],
+        "@typescript-eslint/no-explicit-any": ["warn"],
+        "no-useless-catch": ["off"]
       },
     },
 

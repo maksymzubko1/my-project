@@ -1,22 +1,24 @@
-import React, { FormEvent, useCallback, useContext } from "react";
-import Input from "~/components/Input/Input";
-import FileUpload from "~/components/FileUpload/FileUpload";
-import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
-import TagsInput from "~/components/Input/TagsInput";
-import { PostFormContext } from "~/contexts/PostContext";
 import { Form as RemixForm } from "@remix-run/react";
+import { FormEvent, useCallback, useContext } from "react";
+
 import Button from "~/components/Button/Button";
+import FileUpload from "~/components/FileUpload/FileUpload";
+import Input from "~/components/Input/Input";
+import TagsInput from "~/components/Input/TagsInput";
+import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
+import { PostFormContext } from "~/contexts/PostContext";
 
 const Form = () => {
-  const {
-    isLoading,
-    extras, onChange, onSubmit, values, errors
-  } = useContext(PostFormContext);
+  const { extras, onChange, onSubmit, values, errors } =
+    useContext(PostFormContext);
 
-  const onSubmitFunction = useCallback((event: FormEvent<HTMLFormElement> | null, action?: "draft") => {
-    event?.preventDefault();
-    onSubmit(event, action);
-  }, [onSubmit]);
+  const onSubmitFunction = useCallback(
+    (event: FormEvent<HTMLFormElement> | null, action?: "draft") => {
+      event?.preventDefault();
+      onSubmit(event, action);
+    },
+    [onSubmit],
+  );
 
   const handleClickDraft = useCallback(() => {
     onSubmitFunction(null, "draft");
@@ -29,8 +31,9 @@ const Form = () => {
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        width: "100%"
-      }}>
+        width: "100%",
+      }}
+    >
       <Input
         name={"title"}
         inputSettings={{ variant: "input" }}

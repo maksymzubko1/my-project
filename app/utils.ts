@@ -1,8 +1,12 @@
+import {
+  MemoryUploadHandlerOptions,
+  UploadHandler,
+  UploadHandlerPart,
+} from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
-import { MemoryUploadHandlerOptions, UploadHandler, UploadHandlerPart } from "@remix-run/node";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -72,6 +76,27 @@ export function useUser(): User {
   return maybeUser;
 }
 
+export function getMinutesFromInterval(interval: string) {
+  switch (interval) {
+    case "everyMinute":
+      return 1;
+    case "every5Minute":
+      return 5;
+    case "every15Minute":
+      return 15;
+    case "every30Minute":
+      return 30;
+    case "everyHour":
+      return 60;
+    case "every4Hour":
+      return 60 * 4;
+    case "everyDay":
+      return 60 * 24;
+    default:
+      return 0;
+  }
+}
+
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
@@ -79,7 +104,7 @@ export function validateEmail(email: unknown): email is string {
 export async function asyncIterableToFile(
   asyncIterable: AsyncIterable<Uint8Array>,
   fileName: string,
-  fileType: string
+  fileType: string,
 ): Promise<File> {
   const chunks: Uint8Array[] = [];
 
@@ -95,7 +120,7 @@ export async function asyncIterableToFile(
 }
 
 export function isEmpty(value: string | string[] | object | null | undefined) {
-  if(value === null || value === undefined) {
+  if (value === null || value === undefined) {
     return true;
   }
 
@@ -103,7 +128,7 @@ export function isEmpty(value: string | string[] | object | null | undefined) {
     return value.length === 0;
   }
 
-  if (typeof value === "object"){
+  if (typeof value === "object") {
     return JSON.stringify(value) === JSON.stringify({});
   }
 
@@ -111,9 +136,9 @@ export function isEmpty(value: string | string[] | object | null | undefined) {
 }
 
 export function createCustomMemoryUploadHandler({
-                                                  filter,
-                                                  maxPartSize = 3000000,
-                                                }: MemoryUploadHandlerOptions = {}): UploadHandler {
+  filter,
+  maxPartSize = 3000000,
+}: MemoryUploadHandlerOptions = {}): UploadHandler {
   return async ({ filename, contentType, name, data }: UploadHandlerPart) => {
     if (
       filter &&
@@ -126,15 +151,15 @@ export function createCustomMemoryUploadHandler({
       return undefined;
     }
     let size = 0;
-    let chunks = [];
-    for await (let chunk of data) {
+    const chunks = [];
+    for await (const chunk of data) {
       size += chunk.byteLength;
       if (size > maxPartSize) {
-        return 'error: file too large';
+        return "error: file too large";
       }
       chunks.push(chunk);
     }
-    if (typeof filename === 'string') {
+    if (typeof filename === "string") {
       return new File(chunks, filename, {
         type: contentType,
       });

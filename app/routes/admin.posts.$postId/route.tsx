@@ -1,26 +1,28 @@
 import {
-  isRouteErrorResponse, ShouldRevalidateFunctionArgs,
-  useLoaderData, useNavigation,
-  useRouteError
+  isRouteErrorResponse,
+  ShouldRevalidateFunctionArgs,
+  useLoaderData,
+  useNavigation,
+  useRouteError,
 } from "@remix-run/react";
-
-import { useToast } from "~/hooks/useToast";
-import useFormState from "~/hooks/useFormState";
-import { PostFormContext, PostFormState } from "~/contexts/PostContext";
-import Form from "~/routes/admin.posts.$postId/form";
 import { useCallback } from "react";
-import Spinner from "~/components/Spinner/Spinner";
 
-import {loader as routeLoader} from "./loader";
-import {action as routeAction} from "./action";
+import Spinner from "~/components/Spinner/Spinner";
+import { PostFormContext, PostFormState } from "~/contexts/PostContext";
+import useFormState from "~/hooks/useFormState";
+import { useToast } from "~/hooks/useToast";
+import Form from "~/routes/admin.posts.$postId/form";
+
+import { action as routeAction } from "./action";
+import { loader as routeLoader } from "./loader";
 
 export const loader = routeLoader;
 export const action = routeAction;
 
 export function shouldRevalidate({
-                                   defaultShouldRevalidate,
-                                   actionResult
-                                 }: ShouldRevalidateFunctionArgs) {
+  defaultShouldRevalidate,
+  actionResult,
+}: ShouldRevalidateFunctionArgs) {
   if (actionResult?.errors || actionResult?.status === "error") {
     return false;
   }
@@ -32,60 +34,55 @@ export default function PostDetailsPage() {
 
   const navigation = useNavigation();
 
-  const {
-    state,
-    initialState,
-    data,
-    isLoading,
-    onChange,
-    onSubmit,
-    isDirty,
-    reset
-  } = useFormState<PostFormState>(post, {
-    ignoreFields: ["localFile", "status"],
-    syncOnUpdate: true
-  });
+  const { state, data, isLoading, onChange, onSubmit, isDirty } =
+    useFormState<PostFormState>(post, {
+      ignoreFields: ["localFile", "status"],
+      syncOnUpdate: true,
+    });
 
   useToast(data);
 
-  const onSubmitFunction = useCallback((_, action?: string) => {
-    const formData = new FormData();
+  const onSubmitFunction = useCallback(
+    (_, action?: string) => {
+      const formData = new FormData();
 
-    if (action && (action === "delete" || action === "soft_delete")) {
-      formData.set("action", action);
-    } else {
-      formData.set("action", "edit");
-      Object.entries(state).forEach(([key, value]) => {
-        if (key === "image") {
-          formData.set(key, value as Blob);
-        } else {
-          formData.set(key, value as string);
-        }
-      });
-    }
+      if (action && (action === "delete" || action === "soft_delete")) {
+        formData.set("action", action);
+      } else {
+        formData.set("action", "edit");
+        Object.entries(state).forEach(([key, value]) => {
+          if (key === "image") {
+            formData.set(key, value as Blob);
+          } else {
+            formData.set(key, value as string);
+          }
+        });
+      }
 
-    onSubmit(formData, { encType: "multipart/form-data" });
-  }, [state]);
+      onSubmit(formData, { encType: "multipart/form-data" });
+    },
+    [state, onSubmit],
+  );
 
-  if(navigation.state === "loading"){
-    return (
-      <Spinner size={"large"} />
-    )
+  if (navigation.state === "loading") {
+    return <Spinner size={"large"} />;
   }
 
   return (
-    <div>
-      <PostFormContext.Provider value={{
-        isLoading,
-        onSubmit: onSubmitFunction,
-        values: state,
-        extras: { isDirty },
-        errors: data?.errors,
-        onChange
-      }}>
-        {state.status === "DRAFTED" && <h2 className="w-full font-bold text-3xl mb-3">
-          Drafted
-        </h2>}
+    <div className="h-full">
+      <PostFormContext.Provider
+        value={{
+          isLoading,
+          onSubmit: onSubmitFunction,
+          values: state,
+          extras: { isDirty },
+          errors: data?.errors,
+          onChange,
+        }}
+      >
+        {state.status === "DRAFTED" ? (
+          <h2 className="w-full font-bold text-3xl mb-3">Drafted</h2>
+        ) : null}
         <Form />
       </PostFormContext.Provider>
     </div>

@@ -6,13 +6,13 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 
+import Button from "~/components/Button/Button";
+import HiddenInput from "~/components/Input/HiddenInput";
+import Input from "~/components/Input/Input";
+import useFormLoading from "~/hooks/useFormLoading";
 import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
-import Button from "~/components/Button/Button";
-import Input from "~/components/Input/Input";
-import HiddenInput from "~/components/Input/HiddenInput";
-import useFormLoading from "~/hooks/useFormLoading";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -84,7 +84,7 @@ export default function LoginPage() {
               autoComplete: "email",
               variant: "input",
               autoFocus: true,
-              required: true
+              required: true,
             }}
             fullWidth
             id={"email"}
@@ -98,7 +98,7 @@ export default function LoginPage() {
               type: "password",
               autoComplete: "current-password",
               variant: "input",
-              required: true
+              required: true,
             }}
             fullWidth
             id={"email"}
@@ -106,7 +106,7 @@ export default function LoginPage() {
             error={actionData?.errors?.password}
           />
 
-          <HiddenInput name={"redirectTo"} value={redirectTo}/>
+          <HiddenInput name={"redirectTo"} value={redirectTo} />
 
           <Button loading={isLoading} fullWidth variant={"primary"} isSubmit>
             Log in

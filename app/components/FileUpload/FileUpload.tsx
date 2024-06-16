@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 
 interface FileUploadProps {
   label?: string;
@@ -13,28 +13,33 @@ interface FileUploadProps {
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
-                                                 value,
-                                                 onChange,
-                                                 label,
-                                                 fullWidth,
-                                                 id,
-                                                 name,
-                                                 initialValue,
-                                                 error,
-                                                 placeholder
-                                               }) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialValue || null);
+  value,
+  onChange,
+  label,
+  fullWidth,
+  id,
+  name,
+  initialValue,
+  error,
+  placeholder,
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialValue || null,
+  );
 
-  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target?.files[0] : null;
-    if (selectedFile) {
-      onChange?.(selectedFile);
-      const objectUrl = URL.createObjectURL(selectedFile);
-      setPreviewUrl(objectUrl);
-    } else {
-      setPreviewUrl(null);
-    }
-  }, [onChange]);
+  const handleFileChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.target.files ? e.target?.files[0] : null;
+      if (selectedFile) {
+        onChange?.(selectedFile);
+        const objectUrl = URL.createObjectURL(selectedFile);
+        setPreviewUrl(objectUrl);
+      } else {
+        setPreviewUrl(null);
+      }
+    },
+    [onChange],
+  );
 
   const handleRemoveFile = () => {
     onChange?.(null);
@@ -43,9 +48,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div className="file-upload">
-      {label && <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>}
+      {label ? (
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          {label}
+        </label>
+      ) : null}
       <input
         id={id}
         type="file"
@@ -54,34 +64,40 @@ const FileUpload: React.FC<FileUploadProps> = ({
         onChange={handleFileChange}
         aria-invalid={!!error}
         placeholder={placeholder}
-        aria-describedby={
-          error ? `${name}-error` : undefined
-        }
+        aria-describedby={error ? `${name}-error` : undefined}
         className={`block cursor-pointer ${fullWidth ? "w-full " : ""}text-sm transition-all text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-500 file:text-sm file:font-semibold file:bg-transparent file:text-blue-700 hover:file:bg-blue-100`}
       />
-      {(previewUrl || value) && (
+      {previewUrl || value ? (
         <div className="image-preview mt-4 relative w-fit">
-          <img src={previewUrl || value} alt="Preview" className="w-32 h-32 object-cover rounded-md shadow-md" />
+          <img
+            src={previewUrl || value}
+            alt="Preview"
+            className="w-32 h-32 object-cover rounded-md shadow-md"
+          />
           <button
             type="button"
             onClick={handleRemoveFile}
             className="absolute top-1 right-1 text-red-700 bg-white p-1 rounded-md"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-trash"
-                 viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-              <path
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              className="bi bi-trash"
+              viewBox="0 0 16 16"
+            >
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
             </svg>
           </button>
         </div>
-      )}
-      {error && (
+      ) : null}
+      {error ? (
         <div className="pt-1 text-red-700" id={`${name}-error`}>
           {error}
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

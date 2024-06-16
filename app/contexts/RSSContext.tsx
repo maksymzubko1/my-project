@@ -1,16 +1,16 @@
 import { createContext } from "react";
-import { FormProps } from "~/contexts/types";
 
+import { FormProps } from "~/contexts/types";
 import { Interval } from "~/models/rss.server";
 
 export interface RSSFormState {
-  name: string,
+  name: string;
   source: string;
   interval: Interval;
-  stopTags: string[],
-  fieldMatching: { [key: string]: string },
-  keys?: string[],
-  isPaused: boolean
+  stopTags: string[];
+  fieldMatching: Record<string, string>;
+  keys?: string[];
+  isPaused: boolean;
 }
 
 export interface Extras {
@@ -19,10 +19,8 @@ export interface Extras {
 
 export const RSSFormContext = createContext<FormProps<RSSFormState, Extras>>({
   isLoading: false,
-  onChange: () => {
-  },
-  onSubmit: () => {
-  },
+  onChange: () => {},
+  onSubmit: () => {},
   values: {
     name: "",
     source: "",
@@ -33,5 +31,5 @@ export const RSSFormContext = createContext<FormProps<RSSFormState, Extras>>({
     keys: [],
   },
   extras: {},
-  errors: {}
+  errors: {},
 });

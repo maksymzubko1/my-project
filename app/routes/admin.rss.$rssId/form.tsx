@@ -1,37 +1,25 @@
-import React, { FormEvent, useCallback, useContext } from "react";
-import Input from "~/components/Input/Input";
-import FileUpload from "~/components/FileUpload/FileUpload";
-import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
-import TagsInput from "~/components/Input/TagsInput";
-import Button from "~/components/Button/Button";
-import { PostFormContext } from "~/contexts/PostContext";
 import { Form as RemixForm } from "@remix-run/react";
-import Modal from "~/components/Modal/Modal";
-import Tooltip from "~/components/Tooltip/Tooltip";
-import useModal from "~/hooks/useModal";
+import { FormEvent, useCallback, useContext } from "react";
+
+import Button from "~/components/Button/Button";
+import FieldMatching from "~/components/FieldMatching";
+import Input from "~/components/Input/Input";
+import TagsInput from "~/components/Input/TagsInput";
+import Select from "~/components/Select";
+import { RSSFormContext } from "~/contexts/RSSContext";
+import { intervalOptions } from "~/routes/admin.rss.new/utils";
 
 const Form = () => {
-  const {
-    isLoading,
-    extras, onChange, onSubmit, values, errors
-  } = useContext(PostFormContext);
+  const { isLoading, extras, onChange, onSubmit, values, errors } =
+    useContext(RSSFormContext);
 
-  const { isOpened, handleToggleModal } = useModal({});
-
-  const onSubmitFunction = useCallback((event: FormEvent<HTMLFormElement> | null, action?: "soft_delete" | "delete") => {
-    event?.preventDefault();
-    onSubmit(event, action);
-  }, [onSubmit]);
-
-  const handleSoftDelete = useCallback(() => {
-    handleToggleModal();
-    onSubmitFunction(null, "soft_delete");
-  }, [onSubmitFunction, handleToggleModal]);
-
-  const handeDelete = useCallback(() => {
-    handleToggleModal();
-    onSubmitFunction(null, "delete");
-  }, [onSubmitFunction, handleToggleModal]);
+  const onSubmitFunction = useCallback(
+    (event: FormEvent<HTMLFormElement> | null) => {
+      event?.preventDefault();
+      onSubmit(event);
+    },
+    [onSubmit],
+  );
 
   return (
     <RemixForm
@@ -40,85 +28,78 @@ const Form = () => {
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        width: "100%"
-      }}>
-      <Input
-        name={"title"}
-        inputSettings={{ variant: "input" }}
-        label={"Title"}
-        id={"title"}
-        error={errors?.title}
-        value={values.title}
-        onChange={(value) => onChange(value, "title")}
-      />
-
-      <FileUpload
-        name={"file"}
-        id={"file"}
-        label={"Photo"}
-        error={errors?.image}
-        onChange={(value) => onChange(value, "image")}
-        value={values.image}
-        placeholder={"Select your photo"}
-      />
-
-      <TinymceEditor
-        name={"body"}
-        error={errors?.body}
-        value={values.body}
-        onChange={(value) => onChange(value, "body")}
-      />
-
-      <TagsInput
-        id={"tags"}
-        error={errors?.tags}
-        name={"tags"}
-        label={"Tags"}
-        value={values.tags}
-        onChange={(value) => onChange(value, "tags")}
-      />
-
-      <div className="flex justify-between items-center mt-10">
-        <Button
-          formMethod={"delete"}
-          variant={"destructive"}
-          onClick={handleToggleModal}
-          disabled={isLoading}
-        >
-          Delete
-        </Button>
-        <Button
-          formMethod={"post"}
-          variant={"primary"}
-          disabled={!extras?.isDirty}
-          loading={isLoading}
-          isSubmit
-        >
-          Save
-        </Button>
+        width: "100%",
+      }}
+    >
+      <div className={"flex flex-col gap-3 items-start"}>
+        <Input
+          disabled
+          fullWidth
+          name={"source"}
+          inputSettings={{ variant: "input" }}
+          label={"Source"}
+          id={"source"}
+          placeholder={"Enter source URL"}
+          error={errors?.source}
+          value={values.source}
+          onChange={(value) => onChange(value, "source")}
+        />
       </div>
-      <Modal isLoading={isLoading}
-             open={isOpened}
-             onClose={handleToggleModal}
-             title={"Deletion modal"}
-             actions={[
-               {
-                 text: "Delete soft",
-                 onAction: handleSoftDelete,
-                 buttonType: "destructive"
-               },
-               {
-                 text: "Delete permanently",
-                 onAction: handeDelete,
-                 buttonType: "destructive"
-               }
-             ]}>
-        <p>Select please which method of deletion you are prefer: <Tooltip
-          tooltip={"The post will be deleted permanently"}><b>default delete</b></Tooltip> or <Tooltip
-          tooltip={"The post will not be available to users, but you can restore it at any time"}><b>soft
-          delete</b></Tooltip>
-        </p>
-      </Modal>
+
+      {values.keys && !errors?.source ? (
+        <>
+          <FieldMatching
+            error={errors?.fieldMatching}
+            label={"Field matching"}
+            onChange={(value) => onChange(value, "fieldMatching")}
+            availableKeys={values.keys}
+            fields={values.fieldMatching}
+          />
+
+          <Input
+            name={"name"}
+            inputSettings={{ variant: "input" }}
+            label={"Name"}
+            placeholder={"Enter name of RSS"}
+            id={"name"}
+            error={errors?.name}
+            value={values.name}
+            onChange={(value) => onChange(value, "name")}
+          />
+
+          <Select
+            name={"interval"}
+            disableFilter
+            error={errors?.interval}
+            label={"Fetch interval"}
+            items={intervalOptions}
+            placeholder={"Select interval"}
+            value={values.interval as string}
+            onChange={(value) => onChange(value, "interval")}
+          />
+
+          <TagsInput
+            id={"stopTags"}
+            error={errors?.stopTags}
+            name={"stopTags"}
+            label={"Stop tags"}
+            value={values.stopTags}
+            onChange={(value) => onChange(value, "stopTags")}
+          />
+
+          <div className="flex justify-end items-center mt-10">
+            <Button
+              formMethod={"post"}
+              variant={"primary"}
+              disabled={!extras?.isDirty}
+              loading={isLoading}
+              isSubmit
+            >
+              Save
+            </Button>
+          </div>
+        </>
+      ) : null}
     </RemixForm>
   );
 };

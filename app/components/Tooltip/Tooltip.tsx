@@ -1,5 +1,11 @@
-import { FC, ReactNode, useRef } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/shadcn/ui/tooltip";
+import { FC, ReactNode } from "react";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/shadcn/ui/tooltip";
 
 interface Props {
   children: ReactNode;
@@ -8,7 +14,7 @@ interface Props {
 }
 
 const ToolTip: FC<Props> = ({ children, tooltip, disabled }): JSX.Element => {
-  if(disabled){
+  if (disabled) {
     return <>{children}</>;
   }
 

@@ -11,7 +11,11 @@ export async function getTag({ id }: Pick<Tag, "id">): Promise<Tag> {
   });
 }
 
-export async function getTagsListItems({ postId }: { postId: Post["id"] }): Promise<{tag: Tag}[]> {
+export async function getTagsListItems({
+  postId,
+}: {
+  postId: Post["id"];
+}): Promise<{ tag: Tag }[]> {
   return prisma.tagPost.findMany({
     select: { tag: true },
     where: {
@@ -34,7 +38,11 @@ export async function createTag({ name }: Pick<Tag, "name">): Promise<Tag> {
   });
 }
 
-export async function createTags({ tags }: { tags: Tag["name"][] }): Promise<Tag[]> {
+export async function createTags({
+  tags,
+}: {
+  tags: Tag["name"][];
+}): Promise<Tag[]> {
   const createdTags = [];
   const uniqueTags = [...new Set(tags)];
 
@@ -46,12 +54,12 @@ export async function createTags({ tags }: { tags: Tag["name"][] }): Promise<Tag
   return createdTags;
 }
 
-export async function clearTags({postId}:{postId: Post["id"]}){
+export async function clearTags({ postId }: { postId: Post["id"] }) {
   prisma.tagPost.deleteMany({
     where: {
-      postId
-    }
-  })
+      postId,
+    },
+  });
 }
 
 export async function deleteTag({ id }: Pick<Tag, "id">) {

@@ -1,37 +1,24 @@
-import React, { FormEvent, useCallback, useContext } from "react";
-import Input from "~/components/Input/Input";
-import FileUpload from "~/components/FileUpload/FileUpload";
-import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
-import TagsInput from "~/components/Input/TagsInput";
-import Button from "~/components/Button/Button";
-import { PostFormContext } from "~/contexts/PostContext";
 import { Form as RemixForm } from "@remix-run/react";
-import Modal from "~/components/Modal/Modal";
-import Tooltip from "~/components/Tooltip/Tooltip";
-import useModal from "~/hooks/useModal";
+import { FormEvent, useCallback, useContext } from "react";
+
+import Button from "~/components/Button/Button";
+import FileUpload from "~/components/FileUpload/FileUpload";
+import Input from "~/components/Input/Input";
+import TagsInput from "~/components/Input/TagsInput";
+import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
+import { PostFormContext } from "~/contexts/PostContext";
 
 const Form = () => {
-  const {
-    isLoading,
-    extras, onChange, onSubmit, values, errors
-  } = useContext(PostFormContext);
+  const { isLoading, extras, onChange, onSubmit, values, errors } =
+    useContext(PostFormContext);
 
-  const { isOpened, handleToggleModal } = useModal({});
-
-  const onSubmitFunction = useCallback((event: FormEvent<HTMLFormElement> | null, action?: "soft_delete" | "delete") => {
-    event?.preventDefault();
-    onSubmit(event, action);
-  }, [onSubmit]);
-
-  const handleSoftDelete = useCallback(() => {
-    handleToggleModal();
-    onSubmitFunction(null, "soft_delete");
-  }, [onSubmitFunction, handleToggleModal]);
-
-  const handeDelete = useCallback(() => {
-    handleToggleModal();
-    onSubmitFunction(null, "delete");
-  }, [onSubmitFunction, handleToggleModal]);
+  const onSubmitFunction = useCallback(
+    (event: FormEvent<HTMLFormElement> | null) => {
+      event?.preventDefault();
+      onSubmit(event);
+    },
+    [onSubmit],
+  );
 
   return (
     <RemixForm
@@ -40,8 +27,10 @@ const Form = () => {
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        width: "100%"
-      }}>
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <Input
         name={"title"}
         inputSettings={{ variant: "input" }}
@@ -88,15 +77,7 @@ const Form = () => {
         onChange={(value) => onChange(value, "tags")}
       />
 
-      <div className="flex justify-between items-center mt-10">
-        <Button
-          formMethod={"delete"}
-          variant={"destructive"}
-          onClick={handleToggleModal}
-          disabled={isLoading}
-        >
-          Delete
-        </Button>
+      <div className="flex justify-end items-center mt-10">
         <Button
           formMethod={"post"}
           variant={"primary"}
@@ -107,28 +88,6 @@ const Form = () => {
           Save
         </Button>
       </div>
-      <Modal isLoading={isLoading}
-             open={isOpened}
-             onClose={handleToggleModal}
-             title={"Deletion modal"}
-             actions={[
-               {
-                 text: "Delete soft",
-                 onAction: handleSoftDelete,
-                 buttonType: "destructive"
-               },
-               {
-                 text: "Delete permanently",
-                 onAction: handeDelete,
-                 buttonType: "destructive"
-               }
-             ]}>
-        <p>Select please which method of deletion you are prefer: <Tooltip
-          tooltip={"The post will be deleted permanently"}><b>default delete</b></Tooltip> or <Tooltip
-          tooltip={"The post will not be available to users, but you can restore it at any time"}><b>soft
-          delete</b></Tooltip>
-        </p>
-      </Modal>
     </RemixForm>
   );
 };

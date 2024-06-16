@@ -1,14 +1,15 @@
-import {createContext} from "react";
-import {FormProps} from "~/contexts/types";
 import { PostType } from "@prisma/client";
+import { createContext } from "react";
+
+import { FormProps } from "~/contexts/types";
 
 export interface PostFormState {
-  title: string,
+  title: string;
   image: string | undefined;
   localFile: File | null | undefined;
   description: string;
-  body: string,
-  tags: string[],
+  body: string;
+  tags: string[];
   status?: PostType;
 }
 
@@ -29,5 +30,5 @@ export const PostFormContext = createContext<FormProps<PostFormState, Extras>>({
     tags: [],
   },
   extras: {},
-  errors: {}
+  errors: {},
 });

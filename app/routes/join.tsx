@@ -5,15 +5,14 @@ import type {
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { useEffect, useRef } from "react";
 
+import Button from "~/components/Button/Button";
+import HiddenInput from "~/components/Input/HiddenInput";
+import Input from "~/components/Input/Input";
+import useFormLoading from "~/hooks/useFormLoading";
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
-import Input from "~/components/Input/Input";
-import HiddenInput from "~/components/Input/HiddenInput";
-import Button from "~/components/Button/Button";
-import useFormLoading from "~/hooks/useFormLoading";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -86,7 +85,13 @@ export default function Join() {
         <Form method="post" className="space-y-6">
           <Input
             name={"email"}
-            inputSettings={{type: "email", required: true, autoFocus: true, autoComplete: "email", variant: "input"}}
+            inputSettings={{
+              type: "email",
+              required: true,
+              autoFocus: true,
+              autoComplete: "email",
+              variant: "input",
+            }}
             id={"email"}
             error={actionData?.errors?.email}
             label={"Email address"}
@@ -95,14 +100,19 @@ export default function Join() {
 
           <Input
             name={"password"}
-            inputSettings={{type: "password", required: true, autoComplete: "current-password", variant: "input"}}
+            inputSettings={{
+              type: "password",
+              required: true,
+              autoComplete: "current-password",
+              variant: "input",
+            }}
             id={"password"}
             error={actionData?.errors?.password}
             label={"Password"}
             placeholder={"Enter password"}
           />
 
-          <HiddenInput name={"redirectTo"} value={redirectTo}/>
+          <HiddenInput name={"redirectTo"} value={redirectTo} />
 
           <Button fullWidth isSubmit loading={isLoading} variant={"primary"}>
             Create Account

@@ -1,47 +1,57 @@
-import type { Media, Post, Tag, TagPost } from "@prisma/client";
+import type { Media, Post, Tag } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { Prisma } from "@prisma/client";
-import SortOrder = Prisma.SortOrder;
-import { clearTags, createTags } from "~/models/tags.server";
 import { deleteMedia } from "~/models/media.server";
+import { createTags } from "~/models/tags.server";
+
+import SortOrder = Prisma.SortOrder;
 
 export type { Post, PostType } from "@prisma/client";
-type PostType = Pick<Post, "id" | "body" | "title" | "description" | "status"> & {
+type PostType = Pick<
+  Post,
+  "id" | "body" | "title" | "description" | "status"
+> & {
   image: Pick<Media, "url" | "id"> | null;
-  tagPost: { tag: Pick<Tag, "name"> }[]
+  tagPost: { tag: Pick<Tag, "name"> }[];
 };
 
-export async function getPost({ id }: Pick<Post, "id">):
-  Promise<PostType> {
+export async function getPost({ id }: Pick<Post, "id">): Promise<PostType> {
   return prisma.post.findFirst({
     select: {
-      id: true, body: true, title: true, description: true, status: true,
+      id: true,
+      body: true,
+      title: true,
+      description: true,
+      status: true,
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
       tagPost: {
         select: {
           tag: {
             select: {
-              name: true
-            }
-          }
-        }
-      }
+              name: true,
+            },
+          },
+        },
+      },
     },
-    where: { id }
+    where: { id },
   });
 }
 
-export async function getPostListItems({ sort, query }: {
-  sort?: string | null,
-  query?: string | null
+export async function getPostListItems({
+  sort,
+  query,
+}: {
+  sort?: string | null;
+  query?: string | null;
 }): Promise<Pick<Post, "id" | "title" | "status" | "isDeleted">[]> {
-  let orderBy: any = { updatedAt: SortOrder.desc };
+  let orderBy: any = { createdAt: SortOrder.desc };
   let where: any = {};
 
   if (sort && sort.split("_").length === 2) {
@@ -53,7 +63,10 @@ export async function getPostListItems({ sort, query }: {
       case "name":
         orderBy = { title: sortBy[1] };
         break;
-      case "date":
+      case "datecreate":
+        orderBy = { createdAt: sortBy[1] };
+        break;
+      case "dateupdate":
         orderBy = { updatedAt: sortBy[1] };
         break;
     }
@@ -69,34 +82,39 @@ export async function getPostListItems({ sort, query }: {
           tagPost: {
             some: {
               tag: {
-                name: { equals: query }
-              }
-            }
-          }
-        }
-      ]
+                name: { equals: query },
+              },
+            },
+          },
+        },
+      ],
     };
   }
 
   return prisma.post.findMany({
     select: { id: true, title: true, status: true, isDeleted: true },
     orderBy,
-    where
+    where,
   });
 }
 
-export async function createPost({
-                                   body,
-                                   title,
-                                   image,
-                                   tags,
-                                   description,
-                                   createdAt
-                                 }: Pick<Post, "body" | "title" | "description"> & { createdAt?: Post["createdAt"] } & {
-  tags: Tag["name"][]
-} & {
-  image?: string;
-}, isDrafted = false): Promise<Post> {
+export async function createPost(
+  {
+    body,
+    title,
+    image,
+    tags,
+    description,
+    createdAt,
+  }: Pick<Post, "body" | "title" | "description"> & {
+    createdAt?: Post["createdAt"];
+  } & {
+    tags: Tag["name"][];
+  } & {
+    image?: string;
+  },
+  isDrafted = false,
+): Promise<Post> {
   const createdTags = await createTags({ tags });
 
   const postData: any = {
@@ -107,17 +125,17 @@ export async function createPost({
     tagPost: {
       create: createdTags.map((tag) => ({
         tag: {
-          connect: { id: tag.id }
-        }
-      }))
-    }
+          connect: { id: tag.id },
+        },
+      })),
+    },
   };
 
   if (image) {
     postData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
     };
   }
 
@@ -126,19 +144,22 @@ export async function createPost({
   }
 
   return prisma.post.create({
-    data: postData
+    data: postData,
   });
 }
 
-export async function updatePost(postId: Post["id"], {
-  body,
-  title,
-  image,
-  description,
-  tags
-}: Pick<Post, "body" | "title" | "description"> & { tags: Tag["name"][] } & {
-  image?: string;
-}): Promise<PostType> {
+export async function updatePost(
+  postId: Post["id"],
+  {
+    body,
+    title,
+    image,
+    description,
+    tags,
+  }: Pick<Post, "body" | "title" | "description"> & { tags: Tag["name"][] } & {
+    image?: string;
+  },
+): Promise<PostType> {
   const post = await getPost({ id: postId });
 
   const createdTags = await createTags({ tags });
@@ -151,13 +172,13 @@ export async function updatePost(postId: Post["id"], {
       deleteMany: {},
       create: createdTags.map((tag) => ({
         tag: {
-          connect: { id: tag.id }
-        }
-      }))
-    }
+          connect: { id: tag.id },
+        },
+      })),
+    },
   };
 
-  if(post.status === "DRAFTED"){
+  if (post.status === "DRAFTED") {
     postData.status = "DEFAULT";
   }
 
@@ -168,38 +189,47 @@ export async function updatePost(postId: Post["id"], {
   if (image) {
     postData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
     };
   }
 
   return prisma.post.update({
     data: postData,
     where: {
-      id: postId
+      id: postId,
     },
     select: {
-      id: true, body: true, title: true,
+      id: true,
+      body: true,
+      title: true,
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
       tagPost: {
         select: {
           tag: {
             select: {
-              name: true
-            }
-          }
-        }
-      }
-    }
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
-export async function changePostStatus({ id, status }: Pick<Post, "id" | "status">) {
+export async function changePostStatus({
+  id,
+  status,
+  isDeleted,
+}: Pick<Post, "id"> & {
+  status?: Post["status"];
+  isDeleted?: Post["isDeleted"];
+}) {
   const post = await getPost({ id });
 
   if (!post) {
@@ -209,13 +239,14 @@ export async function changePostStatus({ id, status }: Pick<Post, "id" | "status
   return prisma.post.update({
     where: { id },
     data: {
-      status: status
-    }
+      status: status || undefined,
+      isDeleted: isDeleted || undefined,
+    },
   });
 }
 
 export async function deletePost({ id }: Pick<Post, "id">) {
   return prisma.post.deleteMany({
-    where: { id }
+    where: { id },
   });
 }

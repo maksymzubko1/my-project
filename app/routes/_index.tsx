@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 
-import { useOptionalUser } from "~/utils";
 import Button from "~/components/Button/Button";
+import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "Remix Posts" }];
 
