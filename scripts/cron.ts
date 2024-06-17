@@ -1,11 +1,11 @@
+import type { Post, Tag } from "@prisma/client";
 import moment from "moment";
 import { scheduleJob } from "node-schedule";
 
 import { prisma } from "~/db.server";
+import { createTags } from "~/models/tags.server";
 import RssService from "~/services/rss.service";
 import { getMinutesFromInterval } from "~/utils";
-import { createTags } from "~/models/tags.server";
-import type { Post, Tag } from "@prisma/client";
 
 async function createPost({
                       body,

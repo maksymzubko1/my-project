@@ -2,6 +2,7 @@ import type { MetaFunction } from "@remix-run/node";
 import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useCallback, useState } from "react";
 
+import Button from "~/components/Button/Button";
 import Header from "~/components/Header/Header";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
@@ -17,7 +18,6 @@ import {
 } from "~/routes/admin.posts/utils";
 
 import { loader as routeLoader } from "./loader";
-import Button from "~/components/Button/Button";
 
 export const loader = routeLoader;
 
