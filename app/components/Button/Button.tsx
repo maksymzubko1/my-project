@@ -52,7 +52,7 @@ const Button = ({
           pathname: link.to,
           search: link.search || undefined,
         }}
-        className={`${fullWidth ? "w-full" : ""} transition-all flex items-center justify-center rounded-md border border-transparent px-4 py-3 text-base font-medium shadow-sm sm:px-8 ${buttonStyles[variant]}`}
+        className={`${fullWidth ? "w-full" : ""} shrink-0 transition-all flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium shadow-sm sm:px-8 ${buttonStyles[variant]}`}
       >
         {children}
       </Link>

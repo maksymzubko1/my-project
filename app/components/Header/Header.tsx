@@ -30,11 +30,18 @@ const Header = () => {
           RSS page
         </Link>
       </div>
-      <Form action="/logout" method="post">
-        <Button isSubmit variant={"secondary-2"}>
-          Logout
-        </Button>
-      </Form>
+      <div className="flex gap-2 items-center">
+        <Form action="/" method="get">
+          <Button isSubmit variant={"secondary-2"}>
+            Home
+          </Button>
+        </Form>
+        <Form action="/logout" method="post">
+          <Button isSubmit variant={"secondary-2"}>
+            Logout
+          </Button>
+        </Form>
+      </div>
     </header>
   );
 };

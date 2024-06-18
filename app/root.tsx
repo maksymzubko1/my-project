@@ -54,28 +54,25 @@ export function ErrorBoundary() {
   const error = useRouteError();
   return (
     <html>
-      <head>
-        <title>Oops!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <div className="flex h-[100dvh] flex-col items-center justify-center gap-3">
-          <div className="rounded bg-gray-50 flex flex-col gap-3 p-6 max-w-lg">
-            <h1 className="text-center font-bold">
-              {isRouteErrorResponse(error)
-                ? `${error.status} ${error.statusText}`
-                : error instanceof Error
-                  ? error.message
-                  : "Unknown Error"}
-            </h1>
-            <Button variant={"primary"} link={{ to: "/" }}>
-              Go home
-            </Button>
-          </div>
-        </div>
-        <Scripts />
-      </body>
+    <head>
+      <title>Oops!</title>
+      <Meta />
+      <Links />
+    </head>
+    <body>
+    <div className="flex h-[100dvh] flex-col items-center justify-center gap-3">
+      <div className="rounded bg-gray-50 flex flex-col gap-3 p-6 max-w-lg">
+        <h1 className="text-center font-bold">
+          {isRouteErrorResponse(error)
+            ? `${error.status} ${error.statusText}`
+            : error instanceof Error
+              ? error.message
+              : "Unknown Error"}
+        </h1>
+      </div>
+    </div>
+    <Scripts />
+    </body>
     </html>
   );
 }

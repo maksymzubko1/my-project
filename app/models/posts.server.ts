@@ -16,6 +16,14 @@ type PostType = Pick<
   tagPost: { tag: Pick<Tag, "name"> }[];
 };
 
+type PostMixedType = Pick<
+  Post,
+  "id" | "body" | "title" | "description" | "createdAt"
+> & {
+  image: Pick<Media, "url" | "id"> | null;
+  tagPost: { tag: Pick<Tag, "name"> }[];
+};
+
 export async function getPost({ id }: Pick<Post, "id">): Promise<PostType> {
   return prisma.post.findFirst({
     select: {
@@ -93,6 +101,85 @@ export async function getPostListItems({
 
   return prisma.post.findMany({
     select: { id: true, title: true, status: true, isDeleted: true },
+    orderBy,
+    where,
+  });
+}
+
+export async function getPostListItemsWithMixing({
+                                         sort,
+                                         query,
+                                         tag
+                                       }: {
+  sort?: string | null;
+  query?: string | null;
+}): Promise<PostMixedType[]> {
+  let orderBy: any = { createdAt: SortOrder.desc };
+  let where: any = {};
+
+  if (sort && sort.split("_").length === 2) {
+    const sortBy = sort.split("_");
+    switch (sortBy[0]) {
+      case "id":
+        orderBy = { id: sortBy[1] };
+        break;
+      case "name":
+        orderBy = { title: sortBy[1] };
+        break;
+      case "datecreate":
+        orderBy = { createdAt: sortBy[1] };
+        break;
+      case "dateupdate":
+        orderBy = { updatedAt: sortBy[1] };
+        break;
+    }
+  }
+
+  if (query && query.length > 0) {
+    where = {
+      OR: [
+        { title: { contains: query } },
+        { body: { contains: query } },
+        { description: { contains: query } },
+      ],
+    };
+  }
+
+  if (tag && tag.length > 0) {
+    where = {...where,
+      tagPost: {
+        some: {
+          tag: {
+            name: { equals: tag },
+          },
+        },
+      },
+    };
+  }
+
+  return prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      body: true,
+      description: true,
+      createdAt: true,
+      image: {
+        select: {
+          id: true,
+          url: true,
+        },
+      },
+      tagPost: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
     orderBy,
     where,
   });
