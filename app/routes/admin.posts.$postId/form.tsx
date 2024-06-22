@@ -77,7 +77,7 @@ const Form = () => {
         onChange={(value) => onChange(value, "tags")}
       />
 
-      <div className="flex justify-end items-center mt-10">
+      <div className="flex justify-end items-center mt-10 pb-10">
         <Button
           formMethod={"post"}
           variant={"primary"}

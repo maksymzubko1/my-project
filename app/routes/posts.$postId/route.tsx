@@ -1,3 +1,4 @@
+import type { MetaFunction } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -6,8 +7,14 @@ import {
 } from "@remix-run/react";
 
 import Spinner from "~/components/Spinner/Spinner";
+import UserHeader from "~/components/UserHeader/Header";
 
 import { loader as routeLoader } from "./loader";
+import styles from "./styles.module.css";
+
+export const meta: MetaFunction = (args) => {
+  return [{ title: `Remix Posts - Post ${args.params.postId}` }];
+};
 
 export const loader = routeLoader;
 
@@ -21,10 +28,16 @@ export default function PostPage() {
   }
 
   return (
-    <div className="h-full flex-col gap-2">
-      <h2 className="text-xl">{post.title}</h2>
-      <div dangerouslySetInnerHTML={{__html: post.body}}/>
-    </div>
+    <>
+      <UserHeader />
+      <div className="h-full full-height flex flex-col gap-2 px-4 mt-2 md:px-8 max-w-[1500px] w-full md:w-[80%] mx-auto">
+        <h2 className="text-xl">{post.title}</h2>
+        <div
+          className={`${styles.post}`}
+          dangerouslySetInnerHTML={{ __html: post.body }}
+        />
+      </div>
+    </>
   );
 }
 

@@ -44,7 +44,9 @@ const FieldMatching = ({
           <Select
             label={""}
             disabled
-            onChange={() => {}}
+            onChange={() => {
+              console.log("changed initial");
+            }}
             items={dbKeys}
             value={key}
           />

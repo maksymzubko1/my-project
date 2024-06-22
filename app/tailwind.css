@@ -70,6 +70,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -85,6 +86,19 @@
 
 .bg-dark-modal {
   background-color: rgba(38, 38, 38, 0.75);
+}
+
+.bg-blue-300 {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+html {
+  height: 100dvh;
+  overflow-y: hidden;
+}
+
+body {
+  overflow: auto;
 }
 
 html.no-scroll,

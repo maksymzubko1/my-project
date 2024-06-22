@@ -4,7 +4,7 @@ import Button from "~/components/Button/Button";
 
 interface ActionProps {
   text: string;
-  onAction: Function;
+  onAction: () => void;
   buttonType: "primary" | "secondary" | "destructive";
   isLoading?: boolean;
 }

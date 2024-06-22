@@ -22,6 +22,7 @@ module.exports = {
 
   // Base config
   extends: ["eslint:recommended"],
+  ignorePatterns: ["/node_modules/", "/app/components/shadcn/"],
 
   overrides: [
     // React

@@ -18,7 +18,7 @@ const Header = () => {
   const currentPage = getCurrentPage(location.pathname);
 
   return (
-    <header className="sticky top-0 flex items-center justify-between bg-slate-800 p-4 text-white">
+    <header className="sticky z-50 top-0 flex items-center justify-between bg-slate-800 p-4 text-white">
       <h1 className="text-3xl font-bold">
         <Link to=".">{currentPage}</Link>
       </h1>

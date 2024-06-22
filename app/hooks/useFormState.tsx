@@ -42,6 +42,10 @@ const useFormState = <T extends FormState<T>>(
 
   useEffect(() => {
     const isFieldDirty = (field: keyof T) => {
+      if (typeof state[field] !== "object") {
+        return state[field] !== initialState[field];
+      }
+
       return (
         JSON.stringify(state[field]) !== JSON.stringify(initialState[field])
       );

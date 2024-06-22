@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useState } from "react";
 
 import HiddenInput from "~/components/Input/HiddenInput";
+import { Badge } from "~/components/shadcn/ui/badge";
 
 interface TagsInputProps {
   error?: string;
@@ -35,16 +36,13 @@ const TagsInput = ({
     [onChange, value],
   );
 
-  const handleTagAdd = useCallback(
-    (e) => {
-      const newTag = inputValue.trim();
-      if (newTag !== "" && !value.includes(newTag)) {
-        onChange([...value, newTag]);
-        setInputValue("");
-      }
-    },
-    [inputValue, onChange, value],
-  );
+  const handleTagAdd = useCallback(() => {
+    const newTag = inputValue.trim();
+    if (newTag !== "" && !value.includes(newTag)) {
+      onChange([...value, newTag]);
+      setInputValue("");
+    }
+  }, [inputValue, onChange, value]);
 
   return (
     <div className={`${fullWidth ? "w-full " : ""}flex flex-col gap-1`}>
@@ -57,21 +55,20 @@ const TagsInput = ({
       <div className="tags-input flex-1 rounded-md text-lg">
         <ul className="tags-list flex gap-2 flex-wrap items-center">
           {value?.map((tag, index) => (
-            <li
-              key={index}
-              className="tag px-2 py-1 bg-blue-200 rounded-md flex gap-2"
-            >
-              {tag}
-              <button
-                type={"button"}
-                className="tag-remove ms-3 transition-all hover:text-red-700"
-                onClick={(event) => handleTagRemove(event, tag)}
-              >
-                &#x2715;
-              </button>
+            <li key={index}>
+              <Badge variant="outline">
+                {tag}
+                <button
+                  type={"button"}
+                  className="tag-remove ms-3 transition-all hover:text-red-700"
+                  onClick={(event) => handleTagRemove(event, tag)}
+                >
+                  &#x2715;
+                </button>
+              </Badge>
             </li>
           ))}
-          <li className="flex gap-2 tag-input rounded-md border border-gray-500 px-2 py-1 text-lg">
+          <li className="flex gap-2 tag-input rounded-md border border-gray-500 px-1 py-1 text-lg">
             <input
               type="text"
               value={inputValue}

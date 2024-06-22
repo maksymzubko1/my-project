@@ -16,13 +16,28 @@ type PostType = Pick<
   tagPost: { tag: Pick<Tag, "name"> }[];
 };
 
-type PostMixedType = Pick<
-  Post,
-  "id" | "body" | "title" | "description" | "createdAt"
-> & {
-  image: Pick<Media, "url" | "id"> | null;
-  tagPost: { tag: Pick<Tag, "name"> }[];
-};
+interface PostMixedType {
+  items: {
+    id: Post["id"];
+    title: Post["title"];
+    body: Post["body"];
+    description: Post["description"];
+    createdAt: Post["createdAt"];
+    image: {
+      id: Media["id"];
+      url: Media["url"];
+    } | null;
+    tagPost: {
+      tag: {
+        name: Tag["name"];
+      };
+    }[];
+  }[];
+  totalPages: number;
+  currentPage: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
 
 export async function getPost({ id }: Pick<Post, "id">): Promise<PostType> {
   return prisma.post.findFirst({
@@ -107,13 +122,18 @@ export async function getPostListItems({
 }
 
 export async function getPostListItemsWithMixing({
-                                         sort,
-                                         query,
-                                         tag
-                                       }: {
+  sort,
+  query,
+  page,
+  tag,
+  pageSize = 10,
+}: {
   sort?: string | null;
   query?: string | null;
-}): Promise<PostMixedType[]> {
+  page?: number;
+  pageSize?: number;
+  tag?: string;
+}): Promise<PostMixedType> {
   let orderBy: any = { createdAt: SortOrder.desc };
   let where: any = {};
 
@@ -146,7 +166,8 @@ export async function getPostListItemsWithMixing({
   }
 
   if (tag && tag.length > 0) {
-    where = {...where,
+    where = {
+      ...where,
       tagPost: {
         some: {
           tag: {
@@ -157,7 +178,16 @@ export async function getPostListItemsWithMixing({
     };
   }
 
-  return prisma.post.findMany({
+  const totalCount = await prisma.post.count({ where });
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  const currentPage = page && page > 0 ? page : 1;
+  const skip = (currentPage - 1) * pageSize;
+
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+
+  const items = await prisma.post.findMany({
     select: {
       id: true,
       title: true,
@@ -182,7 +212,11 @@ export async function getPostListItemsWithMixing({
     },
     orderBy,
     where,
+    skip,
+    take: pageSize,
   });
+
+  return { items, totalPages, currentPage, hasNext, hasPrev };
 }
 
 export async function createPost(
@@ -269,11 +303,11 @@ export async function updatePost(
     postData.status = "DEFAULT";
   }
 
-  if (post?.image?.id) {
-    await deleteMedia({ id: post.image.id });
-  }
-
   if (image) {
+    if (post?.image?.id) {
+      await deleteMedia({ id: post.image.id });
+    }
+
     postData.image = {
       create: {
         url: image,

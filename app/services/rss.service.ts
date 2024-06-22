@@ -3,6 +3,15 @@ import moment from "moment";
 import Parser from "rss-parser";
 
 class RSSService {
+  private removeExtraSpaces(text: string) {
+    return text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .join("\n")
+      .replace("noopener nofollow", "nofollow noopener");
+  }
+
   private getRssFields(rssData: object[]): string[] {
     const readonlyFields = [
       "pubDate",
@@ -48,7 +57,9 @@ class RSSService {
 
     // field matching
     for (const [dbKey, entryKey] of Object.entries(fieldMatching)) {
-      _dbObject[dbKey] = entry[entryKey] ?? "";
+      _dbObject[dbKey] = entry[entryKey]
+        ? this.removeExtraSpaces(entry[entryKey])
+        : "";
     }
 
     // default matching

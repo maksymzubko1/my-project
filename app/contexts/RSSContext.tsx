@@ -19,8 +19,12 @@ export interface Extras {
 
 export const RSSFormContext = createContext<FormProps<RSSFormState, Extras>>({
   isLoading: false,
-  onChange: () => {},
-  onSubmit: () => {},
+  onChange: () => {
+    console.log("on change");
+  },
+  onSubmit: () => {
+    console.log("on submit");
+  },
   values: {
     name: "",
     source: "",

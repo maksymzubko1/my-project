@@ -1,11 +1,16 @@
+import { Form, useFetcher } from "@remix-run/react";
+import { useCallback } from "react";
+
 import Button from "~/components/Button/Button";
-import { useOptionalUser } from "~/utils";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
-import { useCallback } from "react";
-import { useFetcher } from "@remix-run/react";
+import { useOptionalUser } from "~/utils";
 
-const UserHeader = () => {
+interface HeaderProps {
+  hideSearch?: boolean;
+}
+
+const UserHeader = ({ hideSearch = false }: HeaderProps) => {
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
@@ -13,16 +18,17 @@ const UserHeader = () => {
     return [
       {
         text: "Admin panel",
-        link: '/admin',
+        link: "/admin",
         icon: `🛡️`,
       },
       {
         text: "Logout",
-        onClick: () => fetcher.submit({}, {action: "/logout", method: "post"}),
+        onClick: () =>
+          fetcher.submit({}, { action: "/logout", method: "post" }),
         icon: `👋`,
       },
-    ]
-  }, []);
+    ];
+  }, [fetcher]);
 
   return (
     <header className="sticky z-50 top-0 flex gap-2 items-center justify-between bg-slate-800 p-4 text-white">
@@ -31,22 +37,37 @@ const UserHeader = () => {
           Home
         </Button>
       </div>
-      <div className="flex items-center  gap-2 w-[400px] md:w-[600px]">
-        <Input
-          fullWidth
-          id={"query"}
-          name={"query"}
-          placeholder={"Search..."}
-          inputSettings={{ variant: "input" }}
-        />
-        {!user ?
-          <Button variant={"secondary-2"} link={{ to: "/login" }}>
-            Log In
-          </Button>
-          :
-          <MenubarComponent items={getItems()} id={"user-bar"}>
-            🙎🏻‍♂️
-          </MenubarComponent>
+      <div className="flex items-center justify-between gap-2 w-[400px] md:w-[600px]">
+        {!hideSearch ? (
+          <Form
+            method={"GET"}
+            className="flex items-center w-full px-2 gap-2 text-black [&>button]:hidden md:[&>button]:flex"
+            action={"search"}
+          >
+            <Input
+              fullWidth
+              id={"query"}
+              name={"query"}
+              placeholder={"Search..."}
+              inputSettings={{ variant: "input" }}
+            />
+            <Button variant={"secondary-2"} isSubmit>
+              Search
+            </Button>
+          </Form>
+        ) : (
+          <div></div>
+        )}
+        {
+          !user ? (
+            <Button variant={"secondary-2"} link={{ to: "/login" }}>
+              Log In
+            </Button>
+          ) : (
+            <MenubarComponent items={getItems()} id={"user-bar"}>
+              🙎🏻‍♂️
+            </MenubarComponent>
+          )
           // <Button variant={"secondary-2"} link={{ to: "/logout" }}>
           //   Logout
           // </Button>

@@ -5,7 +5,7 @@ import Pagination from "~/components/Pagination/Pagination";
 import Post from "~/components/Post/Post";
 import UserHeader from "~/components/UserHeader/Header";
 
-export const meta: MetaFunction = () => [{ title: "Remix Posts" }];
+export const meta: MetaFunction = () => [{ title: "Remix Posts - By tag" }];
 
 import { loader as routeLoader } from "./loader";
 
@@ -18,11 +18,11 @@ export default function Index() {
   return (
     <>
       <UserHeader />
-      <main className="absolute top-0 pt-[72px] w-full min-h-screen h-full bg-white flex flex-col items-center pb-3 overflow-y-auto">
+      <main className="absolute top-0 pt-[72px] w-full min-h-screen h-full bg-white pb-3 overflow-y-auto">
         <div className="w-full md:w-[80%] max-w-[1500px] h-auto mx-auto flex flex-col items-center">
           <section
             id={"posts-list"}
-            className="flex flex-col gap-[20px] justify-center p-4"
+            className="flex flex-col gap-[20px] w-full justify-center p-4"
           >
             {items.length > 0 ? (
               items.map((item) => <Post key={item.id} {...item} />)

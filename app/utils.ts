@@ -135,6 +135,19 @@ export function isEmpty(value: string | string[] | object | null | undefined) {
   return false;
 }
 
+export function getSearchParams(
+  searchString: string,
+): Record<string, string | undefined> {
+  const searchParams = new URLSearchParams(searchString);
+  const params: Record<string, string | undefined> = {};
+
+  for (const [key, value] of searchParams.entries()) {
+    params[key] = value;
+  }
+
+  return params;
+}
+
 export function createCustomMemoryUploadHandler({
   filter,
   maxPartSize = 3000000,

@@ -72,7 +72,7 @@ export default function PostsPage() {
   return (
     <div className="flex h-full min-h-screen flex-col">
       <Header />
-      <main className="flex h-full bg-white">
+      <main className="flex absolute pt-[72px] w-full box-border h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
           <Link
             to="new"
@@ -104,7 +104,7 @@ export default function PostsPage() {
             />
             <Button
               loading={fetcher.state === "loading"}
-              variant={"primary"}
+              variant={"secondary-2"}
               isSubmit
             >
               Search
@@ -114,7 +114,7 @@ export default function PostsPage() {
           {(fetcher.data?.postListItems || postListItems).length === 0 ? (
             <p className="p-4">No posts yet</p>
           ) : (
-            <ol className="overflow-y-auto flex flex-col h-[80%]">
+            <ol className="overflow-y-auto h-full flex flex-col">
               {(fetcher.data?.postListItems || postListItems).map((post) => (
                 <li key={post.id}>
                   <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
@@ -132,7 +132,7 @@ export default function PostsPage() {
           )}
         </div>
 
-        <div className="flex-1 p-6 h-full">
+        <div className="flex-1 p-6 h-full overflow-y-auto">
           <Outlet />
         </div>
 

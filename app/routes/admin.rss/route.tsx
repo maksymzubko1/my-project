@@ -2,12 +2,12 @@ import type { MetaFunction } from "@remix-run/node";
 import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { useCallback, useState } from "react";
 
+import Button from "~/components/Button/Button";
 import Header from "~/components/Header/Header";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
 import DeleteRSSModal from "~/components/Modal/DeleteRssModal";
 import Select from "~/components/Select";
-import { Button } from "~/components/shadcn/ui/button";
 import useModal from "~/hooks/useModal";
 import { useToast } from "~/hooks/useToast";
 import { loader as routeLoader } from "~/routes/admin.rss/loader";
@@ -33,7 +33,7 @@ export default function PostsPage() {
   const handleDelete = useCallback(() => {
     fetcher.submit({}, { action: `${selectedRSS}/delete`, method: "post" });
     handleToggleModal();
-  }, [handleToggleModal, selectedRSS]);
+  }, [handleToggleModal, selectedRSS, fetcher]);
 
   const action = useCallback(
     (action: "RESUME" | "PAUSE" | "DELETE", id: string) => {
@@ -62,7 +62,7 @@ export default function PostsPage() {
   return (
     <div className="flex h-full min-h-screen flex-col">
       <Header />
-      <main className="flex h-full bg-white">
+      <main className="flex absolute pt-[72px] w-full box-border h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
           <Link
             to="new"
@@ -92,13 +92,15 @@ export default function PostsPage() {
               onChange={handleChangeSort}
               showSelected={false}
             />
-            <Button type="submit">Search</Button>
+            <Button variant={"secondary-2"} isSubmit>
+              Search
+            </Button>
           </fetcher.Form>
 
           {(fetcher.data?.rssListItems || rssListItems).length === 0 ? (
             <p className="p-4">No rss yet</p>
           ) : (
-            <ol className="overflow-y-auto flex flex-col h-[80%]">
+            <ol className="overflow-y-auto flex flex-col h-full">
               {(fetcher.data?.rssListItems || rssListItems).map((rss) => (
                 <li key={rss.id}>
                   <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">

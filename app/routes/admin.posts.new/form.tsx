@@ -80,7 +80,7 @@ const Form = () => {
         onChange={(value) => onChange(value, "tags")}
       />
 
-      <div className="flex justify-end gap-2 items-center mt-10">
+      <div className="flex justify-end gap-2 items-center mt-10 pb-10">
         <Button
           formMethod={"post"}
           variant="primary"

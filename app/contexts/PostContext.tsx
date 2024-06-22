@@ -19,8 +19,12 @@ export interface Extras {
 
 export const PostFormContext = createContext<FormProps<PostFormState, Extras>>({
   isLoading: false,
-  onChange: () => {},
-  onSubmit: () => {},
+  onChange: () => {
+    console.log("on change");
+  },
+  onSubmit: () => {
+    console.log("on submit");
+  },
   values: {
     title: "",
     localFile: null,
