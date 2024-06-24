@@ -1,6 +1,7 @@
-import type { Post, Media } from "@prisma/client";
+import type { Media } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { TCreateMedia } from "~/models/types/media.types";
 
 export type { Media } from "@prisma/client";
 
@@ -13,22 +14,11 @@ export async function getMedia({
   });
 }
 
-export async function createMedia({
-  name,
-  url,
-  postId,
-}: Pick<Media, "name" | "url"> & {
-  postId: Post["id"];
-}): Promise<Media> {
+export async function createMedia({name, url}: TCreateMedia): Promise<Media> {
   return prisma.media.create({
     data: {
       name: name ? name : undefined,
       url,
-      post: {
-        connect: {
-          id: postId,
-        },
-      },
     },
   });
 }

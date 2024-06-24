@@ -6,47 +6,40 @@ import Button from "~/components/Button/Button";
 import Header from "~/components/Header/Header";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
-import DeleteRSSModal from "~/components/Modal/DeleteRssModal";
 import Select from "~/components/Select";
 import useModal from "~/hooks/useModal";
 import { useToast } from "~/hooks/useToast";
-import { loader as routeLoader } from "~/routes/admin.rss/loader";
+import { loader as routeLoader } from "~/routes/admin.mixin/loader";
 import {
   generateItems,
-  getIcon,
   Sort,
   sortOptions,
-} from "~/routes/admin.rss/utils";
+} from "~/routes/admin.mixin/utils";
+import DeleteMixinModal from "~/components/Modal/DeleteMixinModal";
 
 export const loader = routeLoader;
 
-export const meta: MetaFunction = () => [{ title: "Admin - RSS page" }];
+export const meta: MetaFunction = () => [{ title: "Admin - Mixin page" }];
 
-export default function RssPage() {
-  const { rssListItems } = useLoaderData<typeof loader>();
+export default function MixinPage() {
+  const { mixinListItems } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   const [sort, setSort] = useState<Sort>(Sort.DATE_CREATE_DESC);
-  const [selectedRSS, setSelectedRSS] = useState<string>(null);
+  const [selectedMixin, setSelectedMixin] = useState<string>(null);
 
   const { isOpened, handleToggleModal } = useModal({});
 
   const handleDelete = useCallback(() => {
-    fetcher.submit({}, { action: `${selectedRSS}/delete`, method: "post" });
+    fetcher.submit({}, { action: `${selectedMixin}/delete`, method: "post" });
     handleToggleModal();
-  }, [handleToggleModal, selectedRSS, fetcher]);
+  }, [handleToggleModal, selectedMixin, fetcher]);
 
   const action = useCallback(
     (action: "RESUME" | "PAUSE" | "DELETE", id: string) => {
       switch (action) {
         case "DELETE":
-          setSelectedRSS(id);
+          setSelectedMixin(id);
           handleToggleModal();
-          break;
-        case "RESUME":
-          fetcher.submit({}, { action: `${id}/resume`, method: "post" });
-          break;
-        case "PAUSE":
-          fetcher.submit({}, { action: `${id}/pause`, method: "post" });
           break;
       }
     },
@@ -68,7 +61,7 @@ export default function RssPage() {
             to="new"
             className="block p-4 text-xl text-blue-500 hover:bg-blue-50 transition-all"
           >
-            + New Rss
+            + New Mixin
           </Link>
 
           <hr className="mb-3" />
@@ -97,17 +90,17 @@ export default function RssPage() {
             </Button>
           </fetcher.Form>
 
-          {(fetcher.data?.rssListItems || rssListItems).length === 0 ? (
-            <p className="p-4">No rss yet</p>
+          {(fetcher.data?.mixinListItems || mixinListItems).length === 0 ? (
+            <p className="p-4">No mixin yet</p>
           ) : (
             <ol className="overflow-y-auto flex flex-col h-full">
-              {(fetcher.data?.rssListItems || rssListItems).map((rss) => (
-                <li key={rss.id}>
+              {(fetcher.data?.mixinListItems || mixinListItems).map((mixin) => (
+                <li key={mixin.id}>
                   <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
-                    <span className="truncate">{`${getIcon(rss.isPaused)} ${rss.name}`}</span>
+                    <span className="truncate">{mixin.name}</span>
                     <MenubarComponent
-                      id={rss.id}
-                      items={generateItems(rss, action)}
+                      id={mixin.id}
+                      items={generateItems(mixin, action)}
                     >
                       ⚙
                     </MenubarComponent>
@@ -122,7 +115,7 @@ export default function RssPage() {
           <Outlet />
         </div>
 
-        <DeleteRSSModal
+        <DeleteMixinModal
           isLoading={fetcher.state === "loading"}
           isOpened={isOpened}
           handleClose={handleToggleModal}

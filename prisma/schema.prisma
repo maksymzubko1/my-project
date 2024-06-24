@@ -23,6 +23,23 @@ enum PostType {
   DRAFTED
 }
 
+enum MixinType {
+  IMAGE
+  TEXT
+  POST
+}
+
+enum DisplayOn {
+  LIST
+  SEARCH
+  BOTH
+}
+
+enum PageType {
+  MAIN
+  TAG_FILTER
+}
+
 model User {
   id       String    @id @default(cuid())
   email    String    @unique
@@ -44,11 +61,14 @@ model Post {
   title       String
   body        String
   description String?
-  image       Media?
+
+  imageId String?
+  image   Media?  @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   status    PostType @default(DEFAULT)
   isDeleted Boolean  @default(false)
 
+  mixin   Mixin[]
   tagPost TagPost[]
 
   createdAt DateTime @default(now())
@@ -75,12 +95,40 @@ model TagPost {
 }
 
 model Media {
-  id     String  @id @default(cuid())
-  name   String?
-  url    String
-  postId String  @unique
+  id   String  @id @default(cuid())
+  name String?
+  url  String
 
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  posts  Post[]
+  mixins Mixin[]
+}
+
+model Mixin {
+  id        String     @id @default(cuid())
+  type      MixinType
+  name      String
+  text      String?
+  link      String?
+  draft     Boolean    @default(true)
+  displayOn DisplayOn?
+  pageType  PageType?
+  priority  Int        @default(0)
+  regex     String?
+
+  image   Media?  @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imageId String?
+
+  postId String?
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MixinSettings {
+  id             String @id @default(cuid())
+  mixinPerList   Int    @default(3)
+  mixinPerSearch Int    @default(3)
 }
 
 model RSSSettings {

@@ -49,7 +49,7 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
               id={"query"}
               name={"query"}
               placeholder={"Search..."}
-              inputSettings={{ variant: "input" }}
+              inputSettings={{ variant: "input", required: true }}
             />
             <Button variant={"secondary-2"} isSubmit>
               Search
