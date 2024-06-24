@@ -16,7 +16,9 @@ export type TCreatePost = Pick<Post, "body" | "title" | "description"> & {
   image?: string;
 };
 
-export type TUpdatePost = Pick<Post, "body" | "title" | "description"> & { tags: Tag["name"][] } & {
+export type TUpdatePost = Pick<Post, "body" | "title" | "description"> & {
+  tags: Tag["name"][];
+} & {
   image?: string;
 };
 

@@ -2,10 +2,9 @@ import type { RSSSettings } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-
-import JsonObject = Prisma.JsonObject;
-import SortOrder = Prisma.SortOrder;
 import { TCreateRss, TUpdateRss } from "~/models/types/rss.types";
+
+import SortOrder = Prisma.SortOrder;
 
 export type { RSSSettings } from "@prisma/client";
 export { Interval } from "@prisma/client";
@@ -75,14 +74,8 @@ export async function createRssSource({
 
 export async function updateRssSource(
   id: RSSSettings["id"],
-  {
-    interval,
-    source,
-    name,
-    fieldMatching,
-    stopTags,
-    isPaused,
-  }: TUpdateRss): Promise<RSSSettings> {
+  { interval, source, name, fieldMatching, stopTags, isPaused }: TUpdateRss,
+): Promise<RSSSettings> {
   return prisma.rSSSettings.update({
     where: {
       id,

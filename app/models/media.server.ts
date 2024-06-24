@@ -14,7 +14,7 @@ export async function getMedia({
   });
 }
 
-export async function createMedia({name, url}: TCreateMedia): Promise<Media> {
+export async function createMedia({ name, url }: TCreateMedia): Promise<Media> {
   return prisma.media.create({
     data: {
       name: name ? name : undefined,

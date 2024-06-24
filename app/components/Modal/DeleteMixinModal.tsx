@@ -28,7 +28,8 @@ const DeleteRSSModal = ({
       ]}
     >
       <p>
-        Are you sure you want to delete this Mixin? This action cannot be undone.
+        Are you sure you want to delete this Mixin? This action cannot be
+        undone.
       </p>
     </Modal>
   );

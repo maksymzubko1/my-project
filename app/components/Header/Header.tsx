@@ -23,13 +23,26 @@ const Header = () => {
         <Link to=".">{currentPage}</Link>
       </h1>
       <div className="flex items-center justify-center gap-2">
-        <Button variant={"secondary-2"} link={{to: location.pathname === "/admin/posts" ? "." : "/admin/posts"}}>
+        <Button
+          variant={"secondary-2"}
+          link={{
+            to: location.pathname === "/admin/posts" ? "." : "/admin/posts",
+          }}
+        >
           Posts
         </Button>
-        <Button variant={"secondary-2"} link={{to: location.pathname === "/admin/rss" ? "." : "/admin/rss"}}>
+        <Button
+          variant={"secondary-2"}
+          link={{ to: location.pathname === "/admin/rss" ? "." : "/admin/rss" }}
+        >
           RSS
         </Button>
-        <Button variant={"secondary-2"} link={{to: location.pathname === "/admin/mixin" ? "." : "/admin/mixin"}}>
+        <Button
+          variant={"secondary-2"}
+          link={{
+            to: location.pathname === "/admin/mixin" ? "." : "/admin/mixin",
+          }}
+        >
           Mixins
         </Button>
       </div>

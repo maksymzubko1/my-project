@@ -6,16 +6,12 @@ import Button from "~/components/Button/Button";
 import Header from "~/components/Header/Header";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
+import DeleteMixinModal from "~/components/Modal/DeleteMixinModal";
 import Select from "~/components/Select";
 import useModal from "~/hooks/useModal";
 import { useToast } from "~/hooks/useToast";
 import { loader as routeLoader } from "~/routes/admin.mixin/loader";
-import {
-  generateItems,
-  Sort,
-  sortOptions,
-} from "~/routes/admin.mixin/utils";
-import DeleteMixinModal from "~/components/Modal/DeleteMixinModal";
+import { generateItems, Sort, sortOptions } from "~/routes/admin.mixin/utils";
 
 export const loader = routeLoader;
 

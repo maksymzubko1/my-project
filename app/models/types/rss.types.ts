@@ -1,7 +1,11 @@
 import { Prisma, RSSSettings } from "@prisma/client";
+
 import JsonObject = Prisma.JsonObject;
 
-export type TCreateRss = Pick<RSSSettings, "interval" | "stopTags" | "name" | "source"> & {
+export type TCreateRss = Pick<
+  RSSSettings,
+  "interval" | "stopTags" | "name" | "source"
+> & {
   fieldMatching: JsonObject;
 };
 

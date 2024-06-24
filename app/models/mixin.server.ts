@@ -1,10 +1,10 @@
 import type { Mixin } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-
 import { getPost } from "~/models/posts.server";
 import { TMixin, TMixinCreate, TMixinUpdate } from "~/models/types/mixin.types";
-import { Prisma } from "@prisma/client";
+
 import SortOrder = Prisma.SortOrder;
 
 export type { Mixin, MixinType } from "@prisma/client";
@@ -25,12 +25,12 @@ export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
-      postId: true
+      postId: true,
     },
-    where: { id }
+    where: { id },
   });
 
   if (mixin?.postId) {
@@ -43,14 +43,13 @@ export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
   return mixin;
 }
 
-export async function getMixinListItems(
-  {
-    sort,
-    query
-  }: {
-    sort?: string | null;
-    query?: string | null;
-  }): Promise<Pick<Mixin, "id" | "name">[]> {
+export async function getMixinListItems({
+  sort,
+  query,
+}: {
+  sort?: string | null;
+  query?: string | null;
+}): Promise<Pick<Mixin, "id" | "name">[]> {
   let orderBy: any = { createdAt: SortOrder.desc };
   let where: any = {};
 
@@ -74,14 +73,14 @@ export async function getMixinListItems(
 
   if (query && query.length > 0) {
     where = {
-      OR: [{ name: { contains: query } }]
+      OR: [{ name: { contains: query } }],
     };
   }
 
   return prisma.mixin.findMany({
     select: { id: true, name: true },
     where,
-    orderBy
+    orderBy,
   });
 }
 
@@ -96,9 +95,9 @@ export async function createMixin(
     regex,
     name,
     image,
-    postId
+    postId,
   }: TMixinCreate,
-  isDrafted = false
+  isDrafted = false,
 ): Promise<Mixin> {
   const mixinData: any = {
     type,
@@ -109,19 +108,27 @@ export async function createMixin(
     postType,
     priority,
     regex,
-    draft: isDrafted
+    draft: isDrafted,
   };
 
   if (image) {
     mixinData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
+    };
+  }
+
+  if (postId) {
+    mixinData.post = {
+      connect: {
+        id: postId,
+      },
     };
   }
 
   return prisma.mixin.create({
-    data: mixinData
+    data: mixinData,
   });
 }
 
@@ -137,8 +144,8 @@ export async function updateMixin(
     name,
     regex,
     image,
-    postId
-  }: TMixinUpdate
+    postId,
+  }: TMixinUpdate,
 ): Promise<TMixin> {
   const mixin = await getMixin({ id });
 
@@ -151,7 +158,7 @@ export async function updateMixin(
     postType,
     priority,
     regex,
-    draft: false
+    draft: false,
   };
 
   if (mixin.draft) {
@@ -161,24 +168,24 @@ export async function updateMixin(
   if (image) {
     mixinData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
     };
   }
 
   if (postId) {
     mixinData.post = {
       connect: {
-        id: postId
-      }
+        id: postId,
+      },
     };
   }
 
   await prisma.mixin.update({
     data: mixinData,
     where: {
-      id
-    }
+      id,
+    },
   });
 
   return getMixin({ id });
@@ -186,6 +193,6 @@ export async function updateMixin(
 
 export async function deleteMixin({ id }: Pick<Mixin, "id">) {
   return prisma.mixin.deleteMany({
-    where: { id }
+    where: { id },
   });
 }

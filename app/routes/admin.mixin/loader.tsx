@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 
-import { requireUserId } from "~/session.server";
 import { getMixinListItems } from "~/models/mixin.server";
+import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUserId(request);

@@ -4,9 +4,14 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "~/db.server";
 import { deleteMedia } from "~/models/media.server";
 import { createTags } from "~/models/tags.server";
+import {
+  PostMixedType,
+  TCreatePost,
+  TPost,
+  TUpdatePost,
+} from "~/models/types/posts.types";
 
 import SortOrder = Prisma.SortOrder;
-import { PostMixedType, TCreatePost, TPost, TUpdatePost } from "~/models/types/posts.types";
 
 export type { Post, PostType } from "@prisma/client";
 
@@ -21,27 +26,27 @@ export async function getPost({ id }: Pick<Post, "id">): Promise<TPost> {
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
       tagPost: {
         select: {
           tag: {
             select: {
-              name: true
-            }
-          }
-        }
-      }
+              name: true,
+            },
+          },
+        },
+      },
     },
-    where: { id }
+    where: { id },
   });
 }
 
 export async function getPostListItems({
-                                         sort,
-                                         query
-                                       }: {
+  sort,
+  query,
+}: {
   sort?: string | null;
   query?: string | null;
 }): Promise<Pick<Post, "id" | "title" | "status" | "isDeleted">[]> {
@@ -76,29 +81,29 @@ export async function getPostListItems({
           tagPost: {
             some: {
               tag: {
-                name: { equals: query }
-              }
-            }
-          }
-        }
-      ]
+                name: { equals: query },
+              },
+            },
+          },
+        },
+      ],
     };
   }
 
   return prisma.post.findMany({
     select: { id: true, title: true, status: true, isDeleted: true },
     orderBy,
-    where
+    where,
   });
 }
 
 export async function getPostListItemsWithMixing({
-                                                   sort,
-                                                   query,
-                                                   page,
-                                                   tag,
-                                                   pageSize = 10
-                                                 }: {
+  sort,
+  query,
+  page,
+  tag,
+  pageSize = 10,
+}: {
   sort?: string | null;
   query?: string | null;
   page?: number;
@@ -131,8 +136,8 @@ export async function getPostListItemsWithMixing({
       OR: [
         { title: { contains: query } },
         { body: { contains: query } },
-        { description: { contains: query } }
-      ]
+        { description: { contains: query } },
+      ],
     };
   }
 
@@ -142,10 +147,10 @@ export async function getPostListItemsWithMixing({
       tagPost: {
         some: {
           tag: {
-            name: { equals: tag }
-          }
-        }
-      }
+            name: { equals: tag },
+          },
+        },
+      },
     };
   }
 
@@ -168,38 +173,31 @@ export async function getPostListItemsWithMixing({
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
       tagPost: {
         select: {
           tag: {
             select: {
-              name: true
-            }
-          }
-        }
-      }
+              name: true,
+            },
+          },
+        },
+      },
     },
     orderBy,
     where,
     skip,
-    take: pageSize
+    take: pageSize,
   });
 
   return { items, totalPages, currentPage, hasNext, hasPrev };
 }
 
 export async function createPost(
-  {
-    body,
-    title,
-    image,
-    tags,
-    description,
-    createdAt
-  }: TCreatePost,
-  isDrafted = false
+  { body, title, image, tags, description, createdAt }: TCreatePost,
+  isDrafted = false,
 ): Promise<Post> {
   const createdTags = await createTags({ tags });
 
@@ -211,17 +209,17 @@ export async function createPost(
     tagPost: {
       create: createdTags.map((tag) => ({
         tag: {
-          connect: { id: tag.id }
-        }
-      }))
-    }
+          connect: { id: tag.id },
+        },
+      })),
+    },
   };
 
   if (image) {
     postData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
     };
   }
 
@@ -230,19 +228,13 @@ export async function createPost(
   }
 
   return prisma.post.create({
-    data: postData
+    data: postData,
   });
 }
 
 export async function updatePost(
   postId: Post["id"],
-  {
-    body,
-    title,
-    image,
-    description,
-    tags
-  }: TUpdatePost
+  { body, title, image, description, tags }: TUpdatePost,
 ): Promise<TPost> {
   const post = await getPost({ id: postId });
 
@@ -256,10 +248,10 @@ export async function updatePost(
       deleteMany: {},
       create: createdTags.map((tag) => ({
         tag: {
-          connect: { id: tag.id }
-        }
-      }))
-    }
+          connect: { id: tag.id },
+        },
+      })),
+    },
   };
 
   if (post.status === "DRAFTED") {
@@ -273,15 +265,15 @@ export async function updatePost(
 
     postData.image = {
       create: {
-        url: image
-      }
+        url: image,
+      },
     };
   }
 
   return prisma.post.update({
     data: postData,
     where: {
-      id: postId
+      id: postId,
     },
     select: {
       id: true,
@@ -290,27 +282,27 @@ export async function updatePost(
       image: {
         select: {
           id: true,
-          url: true
-        }
+          url: true,
+        },
       },
       tagPost: {
         select: {
           tag: {
             select: {
-              name: true
-            }
-          }
-        }
-      }
-    }
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
 export async function changePostStatus({
-                                         id,
-                                         status,
-                                         isDeleted
-                                       }: Pick<Post, "id"> & {
+  id,
+  status,
+  isDeleted,
+}: Pick<Post, "id"> & {
   status?: Post["status"];
   isDeleted?: Post["isDeleted"];
 }) {
@@ -324,13 +316,13 @@ export async function changePostStatus({
     where: { id },
     data: {
       status: status || undefined,
-      isDeleted: isDeleted || undefined
-    }
+      isDeleted: isDeleted || undefined,
+    },
   });
 }
 
 export async function deletePost({ id }: Pick<Post, "id">) {
   return prisma.post.deleteMany({
-    where: { id }
+    where: { id },
   });
 }
