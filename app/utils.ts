@@ -125,7 +125,7 @@ export function isEmpty(value: string | string[] | object | null | undefined) {
   }
 
   if (Array.isArray(value) || typeof value === "string") {
-    return value.length === 0;
+    return value.length === 0 || value === "null";
   }
 
   if (typeof value === "object") {
@@ -146,6 +146,14 @@ export function getSearchParams(
   }
 
   return params;
+}
+
+export function isURL(url: string) {
+  return /\b((?:https?|ftp):\/\/[^\s/$.?#].[^\s]*)\b/.test(url);
+}
+
+export function isRegex(regex: string) {
+  return /^\/.*\/[gimsuy]*$/.test(regex);
 }
 
 export function createCustomMemoryUploadHandler({

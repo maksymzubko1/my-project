@@ -12,6 +12,12 @@ interface FileUploadProps {
   onChange?: (value: File | null) => void;
 }
 
+function getImage(image: File | string) {
+  if (image instanceof File) {
+    return URL.createObjectURL(image);
+  } else return image;
+}
+
 const FileUpload: React.FC<FileUploadProps> = ({
   value,
   onChange,
@@ -24,7 +30,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   placeholder,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    initialValue || null,
+    initialValue ? getImage(initialValue) : null,
   );
 
   const handleFileChange = useCallback(
@@ -67,10 +73,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
         aria-describedby={error ? `${name}-error` : undefined}
         className={`block cursor-pointer ${fullWidth ? "w-full " : ""}text-sm transition-all text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-500 file:text-sm file:font-semibold file:bg-transparent file:text-blue-700 hover:file:bg-blue-100`}
       />
-      {previewUrl || value ? (
+      {typeof previewUrl === "string" || typeof value === "string" ? (
         <div className="image-preview mt-4 relative w-fit">
           <img
-            src={previewUrl || value}
+            src={
+              typeof previewUrl === "string"
+                ? previewUrl
+                : typeof value === "string"
+                  ? value
+                  : ""
+            }
             alt="Preview"
             className="w-32 h-32 object-cover rounded-md shadow-md"
           />

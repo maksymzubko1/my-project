@@ -1,14 +1,21 @@
-import { RSSFormState } from "~/contexts/RSSContext";
-
 export const loader = async () => {
   return {
-    rss: {
+    mixin: {
+      type: "",
       name: "",
-      source: "",
-      interval: "everyMinute",
-      stopTags: [] as RSSFormState["stopTags"],
-      fieldMatching: {} as RSSFormState["fieldMatching"],
-      isPaused: false,
+      textForLink: "",
+      draft: false,
+      link: "",
+      text: "",
+      displayOn: null,
+      pageType: null,
+      priority: 0,
+      regex: "",
+      image: null,
+      imageId: "",
+      postId: "",
+      post: null,
+      localFile: null,
     },
   };
 };

@@ -1,9 +1,9 @@
 import { Media, Mixin } from "@prisma/client";
 
-import { TPost } from "~/models/types/posts.types";
-
 export type TMixin = Omit<Mixin, "createdAt" | "updatedAt"> & {
-  post?: TPost;
+  post?: {
+    name: string;
+  };
 } & {
   image?: {
     id: Media["id"];
@@ -11,12 +11,30 @@ export type TMixin = Omit<Mixin, "createdAt" | "updatedAt"> & {
   };
 };
 
-export type TMixinCreate = Omit<
+export type TMixinCreate = Pick<
   Mixin,
-  "createdAt" | "updatedAt" | "imageId" | "id" | "draft"
+  | "link"
+  | "type"
+  | "displayOn"
+  | "pageType"
+  | "priority"
+  | "regex"
+  | "textForLink"
+  | "text"
+  | "name"
+  | "postId"
 > & { image: string };
 
-export type TMixinUpdate = Omit<
+export type TMixinUpdate = Pick<
   Mixin,
-  "createdAt" | "updatedAt" | "imageId" | "id" | "draft"
+  | "link"
+  | "type"
+  | "displayOn"
+  | "pageType"
+  | "priority"
+  | "regex"
+  | "textForLink"
+  | "text"
+  | "name"
+  | "postId"
 > & { image: string };

@@ -31,16 +31,12 @@ const Form = () => {
   }, []);
 
   const onSubmitFunction = useCallback(
-    (event: FormEvent<HTMLFormElement> | null, action?: "draft") => {
+    (event: FormEvent<HTMLFormElement> | null) => {
       event?.preventDefault();
-      onSubmit(event, action);
+      onSubmit(event);
     },
     [onSubmit],
   );
-
-  const handleClickDraft = useCallback(() => {
-    onSubmitFunction(null, "draft");
-  }, [onSubmitFunction]);
 
   return (
     <RemixForm
@@ -182,15 +178,6 @@ const Form = () => {
           isSubmit
         >
           Save
-        </Button>
-        <Button
-          formMethod={"post"}
-          formAction={"draft"}
-          variant="secondary-2"
-          disabled={!extras?.isDirty}
-          onClick={handleClickDraft}
-        >
-          Save as Draft
         </Button>
       </div>
     </RemixForm>

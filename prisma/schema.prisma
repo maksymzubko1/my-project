@@ -104,16 +104,17 @@ model Media {
 }
 
 model Mixin {
-  id        String     @id @default(cuid())
-  type      MixinType
-  name      String
-  text      String?
-  link      String?
-  draft     Boolean    @default(true)
-  displayOn DisplayOn?
-  pageType  PageType?
-  priority  Int        @default(0)
-  regex     String?
+  id          String     @id @default(cuid())
+  type        MixinType
+  name        String
+  text        String?
+  link        String?
+  textForLink String?
+  draft       Boolean    @default(true)
+  displayOn   DisplayOn?
+  pageType    PageType?
+  priority    Int        @default(0)
+  regex       String?
 
   image   Media?  @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   imageId String?

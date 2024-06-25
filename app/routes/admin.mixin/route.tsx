@@ -11,7 +11,12 @@ import Select from "~/components/Select";
 import useModal from "~/hooks/useModal";
 import { useToast } from "~/hooks/useToast";
 import { loader as routeLoader } from "~/routes/admin.mixin/loader";
-import { generateItems, Sort, sortOptions } from "~/routes/admin.mixin/utils";
+import {
+  generateItems,
+  Sort,
+  sortOptions,
+  getIcon,
+} from "~/routes/admin.mixin/utils";
 
 export const loader = routeLoader;
 
@@ -93,7 +98,7 @@ export default function MixinPage() {
               {(fetcher.data?.mixinListItems || mixinListItems).map((mixin) => (
                 <li key={mixin.id}>
                   <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
-                    <span className="truncate">{mixin.name}</span>
+                    <span className="truncate">{`${getIcon(mixin.draft)} ${mixin.name}`}</span>
                     <MenubarComponent
                       id={mixin.id}
                       items={generateItems(mixin, action)}

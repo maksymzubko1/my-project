@@ -1,13 +1,15 @@
-import type { MetaFunction } from "@remix-run/node";
-import { ShouldRevalidateFunctionArgs, useLoaderData } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  ShouldRevalidateFunctionArgs,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 import { useCallback } from "react";
 
 import { MixinFormContext, MixinFormState } from "~/contexts/MixinContext";
 import useFormState from "~/hooks/useFormState";
 import { useToast } from "~/hooks/useToast";
-import Form from "~/routes/admin.mixin.new/form";
-
-export const meta: MetaFunction = () => [{ title: "Admin - New mixin" }];
+import Form from "~/routes/admin.mixin.$mixinId/form";
 
 import { action as routeAction } from "./action";
 import { loader as routeLoader } from "./loader";
@@ -19,13 +21,17 @@ export function shouldRevalidate({
   defaultShouldRevalidate,
   actionResult,
 }: ShouldRevalidateFunctionArgs) {
-  if (actionResult?.errors || actionResult?.postListItems) {
+  if (
+    actionResult?.errors ||
+    actionResult?.status === "error" ||
+    actionResult?.postListItems
+  ) {
     return false;
   }
   return defaultShouldRevalidate;
 }
 
-export default function NewMixinPage() {
+export default function MixinDetailsPage() {
   const { mixin } = useLoaderData<typeof loader>();
 
   const { state, data, isLoading, onChange, onSubmit, isDirty } =
@@ -73,4 +79,22 @@ export default function NewMixinPage() {
       </MixinFormContext.Provider>
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (error instanceof Error) {
+    return <div>An unexpected error occurred: {error.message}</div>;
+  }
+
+  if (!isRouteErrorResponse(error)) {
+    return <h1>Unknown Error</h1>;
+  }
+
+  if (error.status === 404) {
+    return <div>Mixin not found</div>;
+  }
+
+  return <div>An unexpected error occurred: {error.statusText}</div>;
 }

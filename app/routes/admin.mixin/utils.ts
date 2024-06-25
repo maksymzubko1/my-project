@@ -2,14 +2,14 @@ import { MenubarItem } from "~/components/Menubar/Menubar";
 import { Mixin } from "~/models/mixin.server";
 
 export function generateItems(
-  mixin: Pick<Mixin, "id" | "name">,
+  mixin: Pick<Mixin, "id" | "name" | "draft">,
   action: (action: "DELETE", id: string) => void,
 ) {
   const menuItems: MenubarItem[] = [
     {
-      text: "Edit",
+      text: mixin.draft ? "Complete creating" : "Edit",
       link: `${mixin.id}`,
-      icon: `✏`,
+      icon: mixin.draft ? `👌` : `✏`,
     },
   ];
 
@@ -21,6 +21,14 @@ export function generateItems(
   });
 
   return menuItems;
+}
+
+export function getIcon(isDrafted: boolean) {
+  if (isDrafted) {
+    return "📝";
+  }
+
+  return "📣";
 }
 
 export enum Sort {

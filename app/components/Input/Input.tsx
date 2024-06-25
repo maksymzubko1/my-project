@@ -55,6 +55,8 @@ const Input = ({
         value={value || undefined}
         type={inputSettings.type}
         required={inputSettings.required}
+        max={inputSettings?.max || undefined}
+        min={inputSettings?.min || undefined}
         autoComplete={inputSettings.autoComplete}
         aria-invalid={!!error}
         placeholder={placeholder}
@@ -92,6 +94,8 @@ interface InputProps {
     variant: "input" | "textarea";
     rows?: number;
     type?: HTMLInputTypeAttribute;
+    max?: number;
+    min?: number;
     required?: boolean;
     autoFocus?: boolean;
     autoComplete?: HTMLInputAutoCompleteAttribute;

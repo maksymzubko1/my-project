@@ -7,10 +7,10 @@ import { TMixin, TMixinCreate, TMixinUpdate } from "~/models/types/mixin.types";
 
 import SortOrder = Prisma.SortOrder;
 
-export type { Mixin, MixinType } from "@prisma/client";
+export type { Mixin, MixinType, PageType, DisplayOn } from "@prisma/client";
 
 export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
-  const mixin = await prisma.post.findFirst({
+  const mixin = await prisma.mixin.findFirst({
     select: {
       id: true,
       type: true,
@@ -18,6 +18,7 @@ export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
       link: true,
       text: true,
       displayOn: true,
+      textForLink: true,
       pageType: true,
       priority: true,
       regex: true,
@@ -36,7 +37,7 @@ export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
   if (mixin?.postId) {
     const post = await getPost({ id: mixin.postId });
     if (post) {
-      mixin["post"] = post;
+      mixin.post = { name: post.name };
     }
   }
 
@@ -49,7 +50,7 @@ export async function getMixinListItems({
 }: {
   sort?: string | null;
   query?: string | null;
-}): Promise<Pick<Mixin, "id" | "name">[]> {
+}): Promise<Pick<Mixin, "id" | "name" | "draft">[]> {
   let orderBy: any = { createdAt: SortOrder.desc };
   let where: any = {};
 
@@ -78,7 +79,7 @@ export async function getMixinListItems({
   }
 
   return prisma.mixin.findMany({
-    select: { id: true, name: true },
+    select: { id: true, name: true, draft: true },
     where,
     orderBy,
   });
@@ -90,9 +91,10 @@ export async function createMixin(
     text,
     link,
     displayOn,
-    postType,
+    pageType,
     priority,
     regex,
+    textForLink,
     name,
     image,
     postId,
@@ -105,13 +107,14 @@ export async function createMixin(
     link,
     name,
     displayOn,
-    postType,
+    pageType,
+    textForLink,
     priority,
     regex,
     draft: isDrafted,
   };
 
-  if (image) {
+  if (image && image.length) {
     mixinData.image = {
       create: {
         url: image,
@@ -119,7 +122,7 @@ export async function createMixin(
     };
   }
 
-  if (postId) {
+  if (postId && postId.length) {
     mixinData.post = {
       connect: {
         id: postId,
@@ -139,10 +142,11 @@ export async function updateMixin(
     text,
     link,
     displayOn,
-    postType,
+    pageType,
     priority,
     name,
     regex,
+    textForLink,
     image,
     postId,
   }: TMixinUpdate,
@@ -155,7 +159,8 @@ export async function updateMixin(
     link,
     name,
     displayOn,
-    postType,
+    textForLink,
+    pageType,
     priority,
     regex,
     draft: false,
@@ -165,7 +170,7 @@ export async function updateMixin(
     mixin.draft = false;
   }
 
-  if (image) {
+  if (image && image.length) {
     mixinData.image = {
       create: {
         url: image,
@@ -173,7 +178,7 @@ export async function updateMixin(
     };
   }
 
-  if (postId) {
+  if (postId && postId.length) {
     mixinData.post = {
       connect: {
         id: postId,

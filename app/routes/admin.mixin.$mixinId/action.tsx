@@ -5,21 +5,32 @@ import type {
 } from "@remix-run/node";
 import {
   json,
-  redirect,
   unstable_composeUploadHandlers,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/node";
+import invariant from "tiny-invariant";
 
-import { createMixin } from "~/models/mixin.server";
+import { getMixin, updateMixin } from "~/models/mixin.server";
 import { getPostListItems } from "~/models/posts.server";
 import AwsService from "~/services/aws.service";
 import { requireUserId } from "~/session.server";
 import { isEmpty, isRegex, isURL } from "~/utils";
 
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   await requireUserId(request);
+  invariant(params.mixinId, "postId not found");
+
+  const mixin = await getMixin({ id: params.mixinId });
+
+  if (!mixin) {
+    return json(
+      { status: "error", message: "Not found mixin" },
+      { status: 404 },
+    );
+  }
 
   const url = new URL(request.url);
 
@@ -61,8 +72,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const regex = formData.get("regex") as string;
   const postId = formData.get("postId") as string;
 
-  const isDraft = formData.get("draft");
-
   let errors = {};
 
   if (isEmpty(name)) {
@@ -77,7 +86,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, type: "Type is incorrect" };
   }
 
-  if (isEmpty(displayOn) && !isDraft) {
+  if (isEmpty(displayOn)) {
     errors = { ...errors, displayOn: "DisplayOn is required" };
   }
 
@@ -85,7 +94,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, displayOn: "DisplayOn is incorrect" };
   }
 
-  if (isEmpty(pageType) && !isDraft) {
+  if (isEmpty(pageType)) {
     errors = { ...errors, pageType: "Page type is required" };
   }
 
@@ -115,19 +124,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, priority: "Incorrect priority. Max - 100, Min - 0" };
   }
 
-  if (
-    MixinType[type] === "IMAGE" &&
-    (!image || image !== "string") &&
-    !isDraft
-  ) {
+  if (MixinType[type] === "IMAGE" && (!image || image !== "string")) {
     errors = { ...errors, image: "Image is required" };
   }
 
-  if (MixinType[type] === "TEXT" && isEmpty(text) && !isDraft) {
+  if (MixinType[type] === "TEXT" && isEmpty(text)) {
     errors = { ...errors, text: "Text is required" };
   }
 
-  if (MixinType[type] === "POST" && isEmpty(postId) && !isDraft) {
+  if (MixinType[type] === "POST" && isEmpty(postId)) {
     errors = { ...errors, postId: "Post ID is required" };
   }
 
@@ -144,8 +149,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ status: "error", errors }, { status: 400 });
   }
 
-  const mixin = await createMixin(
-    {
+  try {
+    const updatedMixin = await updateMixin(params.mixinId, {
       name,
       image: image as string,
       pageType: pageType === "null" ? null : (pageType as PageType),
@@ -157,9 +162,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       regex,
       priority: priorityInt,
       link,
-    },
-    !!isDraft,
-  );
+    });
 
-  return redirect(`/admin/mixin/${mixin.id}`);
+    return {
+      status: "success",
+      updatedMixin,
+      message: "Mixin successfully updated",
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: "error",
+      message: "Failed to update mixin",
+    };
+  }
 };
