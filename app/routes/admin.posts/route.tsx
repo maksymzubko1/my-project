@@ -14,10 +14,11 @@ import {
   generateItems,
   getIcon,
   Sort,
-  sortOptions,
+  sortOptions
 } from "~/routes/admin.posts/utils";
 
 import { loader as routeLoader } from "./loader";
+import { GearIcon } from "@radix-ui/react-icons";
 
 export const loader = routeLoader;
 
@@ -39,7 +40,7 @@ export default function PostsPage() {
   const action = useCallback(
     (
       action: "HIDE" | "SHOW" | "DELETE" | "SOFT_DELETE" | "RESTORE",
-      id: string,
+      id: string
     ) => {
       switch (action) {
         case "DELETE":
@@ -60,7 +61,7 @@ export default function PostsPage() {
           break;
       }
     },
-    [fetcher, handleToggleModal],
+    [fetcher, handleToggleModal]
   );
 
   useToast(fetcher.data);
@@ -115,19 +116,27 @@ export default function PostsPage() {
             <p className="p-4">No posts yet</p>
           ) : (
             <ol className="overflow-y-auto h-full flex flex-col">
-              {(fetcher.data?.postListItems || postListItems).map((post) => (
-                <li key={post.id}>
-                  <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
-                    <span className="truncate">{`${getIcon(post.status, post.isDeleted)} ${post.title}`}</span>
-                    <MenubarComponent
-                      id={post.id}
-                      items={generateItems(post, action)}
-                    >
-                      ⚙
-                    </MenubarComponent>
-                  </div>
-                </li>
-              ))}
+              {(fetcher.data?.postListItems || postListItems).map((post) => {
+                  const Icon = getIcon
+                  (post.status, post.isDeleted);
+                  return (
+                    <li key={post.id}>
+                      <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
+                        <span className="flex min-w-[0] items-center gap-2 w-full [&>svg]:shrink-0">
+                          <Icon />
+                          <span className="truncate">{`${post.title}`}</span>
+                        </span>
+                        <MenubarComponent
+                          id={post.id}
+                          items={generateItems(post, action)}
+                        >
+                          <GearIcon />
+                        </MenubarComponent>
+                      </div>
+                    </li>
+                  );
+                }
+              )}
             </ol>
           )}
         </div>

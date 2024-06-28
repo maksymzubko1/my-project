@@ -43,7 +43,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const image = formData.get("image");
   const tags = formData.get("tags") as string;
 
-  const isDraft = formData.get("draft");
+  const isDraft = !!formData.get("draft");
 
   let errors = {};
 

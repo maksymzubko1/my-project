@@ -12,9 +12,10 @@ import { loader as routeLoader } from "./loader";
 export const loader = routeLoader;
 
 export default function Index() {
-  const { items, totalPages, currentPage, hasPrev, hasNext } =
+  const { items, mixin, totalPages, currentPage, hasPrev, hasNext } =
     useLoaderData<typeof loader>();
 
+  console.log(mixin);
   return (
     <>
       <UserHeader />

@@ -15,8 +15,9 @@ import {
   generateItems,
   getIcon,
   Sort,
-  sortOptions,
+  sortOptions
 } from "~/routes/admin.rss/utils";
+import { GearIcon } from "@radix-ui/react-icons";
 
 export const loader = routeLoader;
 
@@ -50,7 +51,7 @@ export default function RssPage() {
           break;
       }
     },
-    [fetcher, handleToggleModal],
+    [fetcher, handleToggleModal]
   );
 
   useToast(fetcher.data);
@@ -101,19 +102,26 @@ export default function RssPage() {
             <p className="p-4">No rss yet</p>
           ) : (
             <ol className="overflow-y-auto flex flex-col h-full">
-              {(fetcher.data?.rssListItems || rssListItems).map((rss) => (
-                <li key={rss.id}>
-                  <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
-                    <span className="truncate">{`${getIcon(rss.isPaused)} ${rss.name}`}</span>
-                    <MenubarComponent
-                      id={rss.id}
-                      items={generateItems(rss, action)}
-                    >
-                      ⚙
-                    </MenubarComponent>
-                  </div>
-                </li>
-              ))}
+              {(fetcher.data?.rssListItems || rssListItems).map((rss) => {
+                  const Icon = getIcon(rss.isPaused);
+                  return (
+                    <li key={rss.id}>
+                      <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
+                    <span className="flex min-w-[0] items-center gap-2 w-full [&>svg]:shrink-0">
+                          <Icon />
+                          <span className="truncate">{`${rss.name}`}</span>
+                        </span>
+                        <MenubarComponent
+                          id={rss.id}
+                          items={generateItems(rss, action)}
+                        >
+                          <GearIcon />
+                        </MenubarComponent>
+                      </div>
+                    </li>
+                  );
+                }
+              )}
             </ol>
           )}
         </div>

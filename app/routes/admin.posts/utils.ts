@@ -1,5 +1,17 @@
 import { MenubarItem } from "~/components/Menubar/Menubar";
 import { Post } from "~/models/posts.server";
+import {
+  EyeOpenIcon,
+  EyeNoneIcon,
+  ResetIcon,
+  ArchiveIcon,
+  TrashIcon,
+  FileTextIcon,
+  Pencil2Icon,
+  Pencil1Icon,
+  RocketIcon,
+  TriangleDownIcon, TriangleUpIcon, ArrowUpIcon, ArrowDownIcon
+} from "@radix-ui/react-icons";
 
 export function generateItems(
   post: Pick<Post, "id" | "status" | "title" | "isDeleted">,
@@ -12,7 +24,7 @@ export function generateItems(
     {
       text: post.status === "DRAFTED" ? "Complete creating" : "Edit",
       link: `${post.id}`,
-      icon: post.status === "DRAFTED" ? `👌` : `✏`,
+      icon: post.status === "DRAFTED" ? RocketIcon : Pencil2Icon,
     },
   ];
 
@@ -20,7 +32,7 @@ export function generateItems(
     menuItems.push({
       text: "Make visible",
       onClick: () => action("SHOW", post.id),
-      icon: `👁`,
+      icon: EyeOpenIcon,
     });
   }
 
@@ -28,7 +40,7 @@ export function generateItems(
     menuItems.push({
       text: "Hide",
       onClick: () => action("HIDE", post.id),
-      icon: `🙈`,
+      icon: EyeNoneIcon,
     });
   }
 
@@ -36,7 +48,7 @@ export function generateItems(
     menuItems.push({
       text: "Restore",
       onClick: () => action("RESTORE", post.id),
-      icon: `↪️`,
+      icon: ResetIcon,
       tooltip: "The post will be restored",
     });
   }
@@ -47,14 +59,14 @@ export function generateItems(
       tooltip:
         "The post will not be available to users, but you can restore it at any time",
       onClick: () => action("SOFT_DELETE", post.id),
-      icon: `📦`,
+      icon: ArchiveIcon,
     });
   }
 
   menuItems.push({
     text: "Delete",
     onClick: () => action("DELETE", post.id),
-    icon: "🗑️",
+    icon: TrashIcon,
     tooltip: "The post will be deleted permanently",
   });
 
@@ -63,16 +75,17 @@ export function generateItems(
 
 export function getIcon(status: Post["status"], isDeleted = false) {
   if (isDeleted) {
-    return "📦";
+    return ArchiveIcon;
   }
+
 
   switch (status) {
     case "DRAFTED":
-      return "📝";
+      return Pencil1Icon;
     case "HIDDEN":
-      return "🙈";
+      return EyeNoneIcon;
     case "DEFAULT":
-      return "📢";
+      return FileTextIcon;
   }
 }
 
@@ -91,41 +104,49 @@ export const sortOptions = [
   {
     id: "0",
     value: "id_asc",
-    label: "ID ⬇",
+    label: "ID",
+    icon: ArrowDownIcon
   },
   {
     id: "1",
     value: "id_desc",
-    label: "ID ⬆",
+    label: "ID",
+    icon: ArrowUpIcon
   },
   {
     id: "2",
     value: "datecreate_asc",
-    label: "Date Created ⬇",
+    label: "Date Created",
+    icon: ArrowDownIcon
   },
   {
     id: "3",
     value: "datecreate_desc",
-    label: "Date Created ⬆",
+    label: "Date Created",
+    icon: ArrowUpIcon
   },
   {
     id: "2",
     value: "dateupdate_asc",
-    label: "Date Updated ⬇",
+    label: "Date Updated",
+    icon: ArrowDownIcon
   },
   {
     id: "3",
     value: "dateupdate_desc",
-    label: "Date Updated ⬆",
+    label: "Date Updated",
+    icon: ArrowUpIcon
   },
   {
     id: "4",
     value: "name_asc",
-    label: "Title ⬇",
+    label: "Title",
+    icon: ArrowDownIcon
   },
   {
     id: "5",
     value: "name_desc",
-    label: "Title ⬆",
+    label: "Title",
+    icon: ArrowUpIcon
   },
 ];

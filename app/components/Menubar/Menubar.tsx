@@ -20,7 +20,7 @@ interface MenubarProps {
 export interface MenubarItem {
   text: string;
   isSeparator?: boolean;
-  icon?: string | React.ReactNode;
+  icon?: string | React.ReactElement | React.ExoticComponent;
   link?: string;
   tooltip?: string;
   onClick?: () => void;
@@ -50,11 +50,11 @@ const MenubarComponent = ({ children, items, id }: MenubarProps) => {
                       to={item.link}
                       className="flex items-center gap-2 w-full"
                     >
-                      {item.icon} {item.text}
+                      {typeof item.icon === "string" ? item.icon : <item.icon />} {item.text}
                     </Link>
                   ) : (
                     <span className="flex items-center gap-2">
-                      {item.icon} {item.text}
+                      {typeof item.icon === "string" ? item.icon : <item.icon />} {item.text}
                     </span>
                   )}
                 </Tooltip>

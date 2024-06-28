@@ -1,5 +1,6 @@
 import { MenubarItem } from "~/components/Menubar/Menubar";
 import { RSSSettings } from "~/models/rss.server";
+import { PauseIcon, Pencil2Icon, ResumeIcon, TimerIcon, TrashIcon } from "@radix-ui/react-icons";
 
 export function generateItems(
   rss: Pick<RSSSettings, "id" | "name" | "isPaused">,
@@ -9,7 +10,7 @@ export function generateItems(
     {
       text: "Edit",
       link: `${rss.id}`,
-      icon: `✏`,
+      icon: Pencil2Icon,
     },
   ];
 
@@ -17,14 +18,14 @@ export function generateItems(
     menuItems.push({
       text: "Resume",
       onClick: () => action("RESUME", rss.id),
-      icon: `▶️`,
+      icon: ResumeIcon,
       tooltip: "Rss will be resumed",
     });
   } else {
     menuItems.push({
       text: "Pause",
       onClick: () => action("PAUSE", rss.id),
-      icon: `⏸️`,
+      icon: PauseIcon,
       tooltip: "Rss will be stopped, you can resume at any time",
     });
   }
@@ -32,7 +33,7 @@ export function generateItems(
   menuItems.push({
     text: "Delete",
     onClick: () => action("DELETE", rss.id),
-    icon: "🗑️",
+    icon: TrashIcon,
     tooltip: "The rss will be deleted permanently",
   });
 
@@ -41,9 +42,9 @@ export function generateItems(
 
 export function getIcon(isPaused: RSSSettings["isPaused"]) {
   if (isPaused) {
-    return "⏸️";
+    return PauseIcon;
   } else {
-    return "🚀";
+    return TimerIcon;
   }
 }
 

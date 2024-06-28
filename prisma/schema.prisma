@@ -38,6 +38,7 @@ enum DisplayOn {
 enum PageType {
   MAIN
   TAG_FILTER
+  BOTH
 }
 
 model User {

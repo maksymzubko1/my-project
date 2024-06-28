@@ -2,6 +2,7 @@ import { Form, Link, useLocation } from "@remix-run/react";
 
 import Button from "~/components/Button/Button";
 import { useUser } from "~/utils";
+import { ExitIcon } from "@radix-ui/react-icons";
 
 function getCurrentPage(pathname: string) {
   if (pathname.includes("/admin/posts")) {

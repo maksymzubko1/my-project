@@ -11,23 +11,30 @@ import Select from "~/components/Select";
 import useModal from "~/hooks/useModal";
 import { useToast } from "~/hooks/useToast";
 import { loader as routeLoader } from "~/routes/admin.mixin/loader";
+import { action as routeAction } from "~/routes/admin.mixin/action";
 import {
   generateItems,
   Sort,
   sortOptions,
-  getIcon,
+  getIcon
 } from "~/routes/admin.mixin/utils";
+import { GearIcon } from "@radix-ui/react-icons";
+import UpdateMixinModal from "~/components/Modal/UpdateMixinModal";
 
 export const loader = routeLoader;
+export const action = routeAction;
 
 export const meta: MetaFunction = () => [{ title: "Admin - Mixin page" }];
 
 export default function MixinPage() {
-  const { mixinListItems } = useLoaderData<typeof loader>();
+  const { mixinListItems, mixinSettings } = useLoaderData<typeof loader>();
+
   const fetcher = useFetcher();
+
   const [sort, setSort] = useState<Sort>(Sort.DATE_CREATE_DESC);
   const [selectedMixin, setSelectedMixin] = useState<string>(null);
 
+  const { isOpened: isOpenedSettings, handleToggleModal: handleToggleModalSettings } = useModal({});
   const { isOpened, handleToggleModal } = useModal({});
 
   const handleDelete = useCallback(() => {
@@ -44,10 +51,17 @@ export default function MixinPage() {
           break;
       }
     },
-    [fetcher, handleToggleModal],
+    [fetcher, handleToggleModal]
   );
 
   useToast(fetcher.data);
+
+  const handleSubmitModal = useCallback((values) => {
+    fetcher.submit({
+      mixinPerSearch: values.mixinPerSearch,
+      mixinPerList: values.mixinPerList
+    });
+  }, [fetcher]);
 
   const handleChangeSort = useCallback((value: string) => {
     setSort(value as Sort);
@@ -58,13 +72,17 @@ export default function MixinPage() {
       <Header />
       <main className="flex absolute pt-[72px] w-full box-border h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
-          <Link
-            to="new"
-            className="block p-4 text-xl text-blue-500 hover:bg-blue-50 transition-all"
-          >
-            + New Mixin
-          </Link>
-
+          <div className="w-full flex items-center gap-2 justify-between px-4 py-2">
+            <Link
+              to="new"
+              className="block text-xl h-full py-3 text-blue-500 hover:bg-blue-50 transition-all flex-1"
+            >
+              + New Mixin
+            </Link>
+            <Button onClick={handleToggleModalSettings} variant={"primary"}>
+              <GearIcon />
+            </Button>
+          </div>
           <hr className="mb-3" />
 
           <fetcher.Form
@@ -95,19 +113,26 @@ export default function MixinPage() {
             <p className="p-4">No mixin yet</p>
           ) : (
             <ol className="overflow-y-auto flex flex-col h-full">
-              {(fetcher.data?.mixinListItems || mixinListItems).map((mixin) => (
-                <li key={mixin.id}>
-                  <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
-                    <span className="truncate">{`${getIcon(mixin.draft)} ${mixin.name}`}</span>
-                    <MenubarComponent
-                      id={mixin.id}
-                      items={generateItems(mixin, action)}
-                    >
-                      ⚙
-                    </MenubarComponent>
-                  </div>
-                </li>
-              ))}
+              {(fetcher.data?.mixinListItems || mixinListItems).map((mixin) => {
+                  const Icon = getIcon(mixin.draft);
+                  return (
+                    <li key={mixin.id}>
+                      <div className="flex items-center gap-3 justify-between border-b p-4 text-xl">
+                        <span className="flex min-w-[0] items-center gap-2 w-full [&>svg]:shrink-0">
+                          <Icon />
+                          <span className="truncate">{`${mixin.name}`}</span>
+                        </span>
+                        <MenubarComponent
+                          id={mixin.id}
+                          items={generateItems(mixin, action)}
+                        >
+                          <GearIcon />
+                        </MenubarComponent>
+                      </div>
+                    </li>
+                  );
+                }
+              )}
             </ol>
           )}
         </div>
@@ -121,6 +146,12 @@ export default function MixinPage() {
           isOpened={isOpened}
           handleClose={handleToggleModal}
           handleSubmit={handleDelete}
+        />
+
+        <UpdateMixinModal
+          isOpened={isOpenedSettings}
+          handleClose={handleToggleModalSettings}
+          initialData={mixinSettings}
         />
       </main>
     </div>

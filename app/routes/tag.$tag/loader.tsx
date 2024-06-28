@@ -9,10 +9,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const page = url.searchParams.get("page");
 
-  const { items, totalPages, hasPrev, hasNext, currentPage } =
+  const { items, mixin, totalPages, hasPrev, hasNext, currentPage } =
     await getPostListItemsWithMixing({
       page: page ? parseInt(page) : undefined,
       tag: params.tag,
+      pageName: "tag"
     });
-  return json({ items, currentPage, totalPages, hasNext, hasPrev });
+  return json({ items, mixin, currentPage, totalPages, hasNext, hasPrev });
 };

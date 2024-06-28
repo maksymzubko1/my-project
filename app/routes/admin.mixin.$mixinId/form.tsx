@@ -128,46 +128,60 @@ const Form = () => {
         /> : null}
 
       {values.type && values.type !== "" ? <>
-          <Select
-            error={errors?.displayOn}
-            disableFilter
-            label={"Display on"}
-            items={mixinDisplayOn}
-            value={values.displayOn}
-            onChange={(value) => onChange(value, "displayOn")}
-          />
-          <Select
-            error={errors?.pageType}
-            disableFilter
-            label={"Page type"}
-            items={mixinPageType}
-            value={values.pageType}
-            onChange={(value) => onChange(value, "pageType")}
-          />
-          <Input
-            name={"regex"}
-            inputSettings={{ variant: "input" }}
-            label={"Regex"}
-            id={"regex"}
-            error={errors?.regex}
-            value={values.regex}
-            onChange={(value) => onChange(value, "regex")}
-          />
-          <Input
-            name={"priority"}
-            inputSettings={{
-              variant: "input",
-              type: "number",
-              max: 100,
-              min: 0,
-            }}
-            label={"Priority"}
-            id={"priority"}
-            error={errors?.priority}
-            value={String(values.priority)}
-            onChange={(value) => onChange(value, "priority")}
-          />
-        </> : null}
+        <Select
+          error={errors?.displayOn}
+          disableFilter
+          label={"Display on"}
+          items={mixinDisplayOn}
+          value={values.displayOn}
+          onChange={(value) => onChange(value, "displayOn")}
+        />
+
+        {values.displayOn && values.displayOn !== "" && values.displayOn !== "SEARCH" &&
+          <>
+            <hr className="my-3"/>
+            <h4 className="text-gray-700">Settings for <bold>List and Tag</bold> pages</h4>
+            <Select
+              error={errors?.pageType}
+              disableFilter
+              label={"Page type"}
+              items={mixinPageType}
+              value={values.pageType}
+              onChange={(value) => onChange(value, "pageType")}
+            />
+            <Input
+              name={"priority"}
+              inputSettings={{
+                variant: "input",
+                type: "number",
+                max: 100,
+                min: 0
+              }}
+              label={"Priority"}
+              id={"priority"}
+              error={errors?.priority}
+              value={String(values.priority)}
+              onChange={(value) => onChange(value, "priority")}
+            />
+          </>
+        }
+
+        {values.displayOn && values.displayOn && values.displayOn !== "LIST" &&
+          <>
+            <hr className="my-3" />
+            <h4 className="text-gray-700">Settings for <bold>Search</bold> page</h4>
+            <Input
+              name={"regex"}
+              inputSettings={{ variant: "input" }}
+              label={"Regex"}
+              id={"regex"}
+              error={errors?.regex}
+              value={values.regex}
+              onChange={(value) => onChange(value, "regex")}
+            />
+          </>}
+
+      </> : null}
 
       <div className="flex justify-end gap-2 items-center mt-10 pb-10">
         <Button

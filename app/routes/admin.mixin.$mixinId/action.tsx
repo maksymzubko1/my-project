@@ -94,7 +94,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     errors = { ...errors, displayOn: "DisplayOn is incorrect" };
   }
 
-  if (isEmpty(pageType)) {
+  if (isEmpty(pageType) && (!isEmpty(displayOn) && displayOn !== "SEARCH")) {
     errors = { ...errors, pageType: "Page type is required" };
   }
 
@@ -124,10 +124,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     errors = { ...errors, priority: "Incorrect priority. Max - 100, Min - 0" };
   }
 
-  if (MixinType[type] === "IMAGE" && (!image || image !== "string")) {
-    errors = { ...errors, image: "Image is required" };
-  }
-
   if (MixinType[type] === "TEXT" && isEmpty(text)) {
     errors = { ...errors, text: "Text is required" };
   }
@@ -141,6 +137,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       ? ((await AwsService.uploadImage(image as File)) as string)
       : undefined;
 
+  console.log(uploadedFile, typeof uploadedFile, !uploadedFile);
+  if (
+    MixinType[type] === "IMAGE" &&
+    (!uploadedFile || typeof uploadedFile !== "string")
+    && !mixin.image
+  ) {
+    errors = { ...errors, image: "Image is required" };
+  }
+
   if (typeof uploadedFile !== "string" && uploadedFile?.error) {
     errors = { ...errors, image: uploadedFile.error };
   }
@@ -152,7 +157,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     const updatedMixin = await updateMixin(params.mixinId, {
       name,
-      image: image as string,
+      image: uploadedFile as string,
       pageType: pageType === "null" ? null : (pageType as PageType),
       displayOn: displayOn === "null" ? null : (displayOn as DisplayOn),
       postId: postId === "null" ? null : postId,

@@ -1,5 +1,6 @@
 import { MenubarItem } from "~/components/Menubar/Menubar";
 import { Mixin } from "~/models/mixin.server";
+import { MixIcon, Pencil1Icon, Pencil2Icon, RocketIcon, TrashIcon } from "@radix-ui/react-icons";
 
 export function generateItems(
   mixin: Pick<Mixin, "id" | "name" | "draft">,
@@ -9,14 +10,14 @@ export function generateItems(
     {
       text: mixin.draft ? "Complete creating" : "Edit",
       link: `${mixin.id}`,
-      icon: mixin.draft ? `👌` : `✏`,
+      icon: mixin.draft ? RocketIcon : Pencil2Icon,
     },
   ];
 
   menuItems.push({
     text: "Delete",
     onClick: () => action("DELETE", mixin.id),
-    icon: "🗑️",
+    icon: TrashIcon,
     tooltip: "The mixin will be deleted permanently",
   });
 
@@ -25,10 +26,10 @@ export function generateItems(
 
 export function getIcon(isDrafted: boolean) {
   if (isDrafted) {
-    return "📝";
+    return Pencil1Icon;
   }
 
-  return "📣";
+  return MixIcon;
 }
 
 export enum Sort {

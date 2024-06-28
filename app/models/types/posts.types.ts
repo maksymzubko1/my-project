@@ -1,4 +1,4 @@
-import { Media, Post, Tag } from "@prisma/client";
+import { Media, Mixin, Post, Tag } from "@prisma/client";
 
 export type TPost = Pick<
   Post,
@@ -43,4 +43,5 @@ export interface PostMixedType {
   currentPage: number;
   hasNext: boolean;
   hasPrev: boolean;
+  mixin: Mixin;
 }

@@ -7,6 +7,7 @@ interface ActionProps {
   onAction: () => void;
   buttonType: "primary" | "secondary" | "destructive";
   isLoading?: boolean;
+  postType?: "cancel" | "submit";
 }
 
 interface ModalProps {
@@ -84,6 +85,7 @@ const Modal = ({
                 loading={action.isLoading || isLoading}
                 onClick={action.onAction}
                 variant={action.buttonType}
+                isSubmit={action.postType === "submit"}
               >
                 {action.text}
               </Button>

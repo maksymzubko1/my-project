@@ -119,13 +119,31 @@ export async function asyncIterableToFile(
   return file;
 }
 
+export function getRandomValuesFromArray(arr, maxLength) {
+  const actualLength = Math.min(maxLength, arr.length);
+
+  const values = new Set();
+
+  while (values.size < actualLength) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    values.add(arr[randomIndex]);
+  }
+
+  return Array.from(values);
+}
+
+
 export function isEmpty(value: string | string[] | object | null | undefined) {
   if (value === null || value === undefined) {
     return true;
   }
 
-  if (Array.isArray(value) || typeof value === "string") {
-    return value.length === 0 || value === "null";
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+
+  if (typeof value === "string") {
+    return value === "null" || value.length === 0;
   }
 
   if (typeof value === "object") {

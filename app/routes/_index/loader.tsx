@@ -7,9 +7,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const page = url.searchParams.get("page");
 
-  const { items, totalPages, hasPrev, hasNext, currentPage } =
+  const { items, mixin, totalPages, hasPrev, hasNext, currentPage } =
     await getPostListItemsWithMixing({
       page: page ? parseInt(page) : undefined,
+      pageName: "list"
     });
-  return json({ items, currentPage, totalPages, hasNext, hasPrev });
+  return json({ items, mixin, currentPage, totalPages, hasNext, hasPrev });
 };

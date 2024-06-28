@@ -27,7 +27,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       pageType: mixin.pageType,
       priority: mixin.priority,
       regex: mixin.regex,
-      image: mixin.image,
+      image: mixin.image?.url,
       imageId: mixin.imageId,
       postId: mixin.postId,
       post: mixin.post,

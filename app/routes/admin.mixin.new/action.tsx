@@ -61,7 +61,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const regex = formData.get("regex") as string;
   const postId = formData.get("postId") as string;
 
-  const isDraft = formData.get("draft");
+  const isDraft = !!formData.get("draft");
 
   let errors = {};
 
@@ -77,6 +77,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, type: "Type is incorrect" };
   }
 
+  console.log(isDraft);
+
   if (isEmpty(displayOn) && !isDraft) {
     errors = { ...errors, displayOn: "DisplayOn is required" };
   }
@@ -85,7 +87,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, displayOn: "DisplayOn is incorrect" };
   }
 
-  if (isEmpty(pageType) && !isDraft) {
+  if (isEmpty(pageType) && (!isEmpty(displayOn) && displayOn !== "SEARCH") && !isDraft) {
     errors = { ...errors, pageType: "Page type is required" };
   }
 
@@ -115,14 +117,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, priority: "Incorrect priority. Max - 100, Min - 0" };
   }
 
-  if (
-    MixinType[type] === "IMAGE" &&
-    (!image || image !== "string") &&
-    !isDraft
-  ) {
-    errors = { ...errors, image: "Image is required" };
-  }
-
   if (MixinType[type] === "TEXT" && isEmpty(text) && !isDraft) {
     errors = { ...errors, text: "Text is required" };
   }
@@ -132,9 +126,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const uploadedFile =
-    typeof image !== "string" && image
+    typeof image !== "string" &&  image
       ? ((await AwsService.uploadImage(image as File)) as string)
       : undefined;
+
+  if (
+    MixinType[type] === "IMAGE" &&
+    (!uploadedFile || typeof uploadedFile !== "string") &&
+    !isDraft
+  ) {
+    errors = { ...errors, image: "Image is required" };
+  }
 
   if (typeof uploadedFile !== "string" && uploadedFile?.error) {
     errors = { ...errors, image: uploadedFile.error };
@@ -147,7 +149,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const mixin = await createMixin(
     {
       name,
-      image: image as string,
+      image: uploadedFile as string,
       pageType: pageType === "null" ? null : (pageType as PageType),
       displayOn: displayOn === "null" ? null : (displayOn as DisplayOn),
       postId: postId === "null" ? null : postId,

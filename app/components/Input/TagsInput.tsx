@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useState } from "react";
 
 import HiddenInput from "~/components/Input/HiddenInput";
 import { Badge } from "~/components/shadcn/ui/badge";
+import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 
 interface TagsInputProps {
   error?: string;
@@ -55,7 +56,7 @@ const TagsInput = ({
       <div className="tags-input flex-1 rounded-md text-lg">
         <ul className="tags-list flex gap-2 flex-wrap items-center">
           {value?.map((tag, index) => (
-            <li key={index}>
+            <li key={index} className="[&>div]:py-2 [&>div]:px-3">
               <Badge variant="outline">
                 {tag}
                 <button
@@ -63,7 +64,7 @@ const TagsInput = ({
                   className="tag-remove ms-3 transition-all hover:text-red-700"
                   onClick={(event) => handleTagRemove(event, tag)}
                 >
-                  &#x2715;
+                  <Cross1Icon/>
                 </button>
               </Badge>
             </li>
@@ -81,7 +82,7 @@ const TagsInput = ({
               className="transtion-all hover:text-blue-500"
               onClick={handleTagAdd}
             >
-              &#43;
+              <PlusIcon/>
             </button>
           </li>
         </ul>

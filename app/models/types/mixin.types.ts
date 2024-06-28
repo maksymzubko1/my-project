@@ -1,5 +1,11 @@
 import { Media, Mixin } from "@prisma/client";
 
+export interface IMixinListProps {
+  page: "search" | "list" | "tag";
+  search?: string;
+  postIds?: string[];
+}
+
 export type TMixin = Omit<Mixin, "createdAt" | "updatedAt"> & {
   post?: {
     name: string;
