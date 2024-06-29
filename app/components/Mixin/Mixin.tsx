@@ -19,7 +19,7 @@ const Mixin = ({
     >
       <span className="z-20 absolute top-0 right-1 text-gray-400 font-bold">Mixin {type === "TEXT" ? 'Text' : type === "POST" ? 'Post' : 'Image'}</span>
       {type === "TEXT" &&
-        <div className="w-full h-full flex-1 flex gap-2 justify-between flex-col pt-2">
+        <div className="w-full h-full flex-1 flex gap-2 justify-between flex-col pt-3">
           <p className="z-50">{text}</p>
           {!isEmpty(textForLink) && !isEmpty(linkForText) && <a className={"text-blue-400 underline hover:text-blue-500 text-end"} target={"_blank"} href={linkForText}>{textForLink}</a>}
         </div>

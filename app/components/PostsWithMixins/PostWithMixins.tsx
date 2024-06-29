@@ -35,7 +35,7 @@ const PostsWithMixins = ({ posts, mixins }: IPostWithMixins) => {
   return (
     <section
       id={"posts-list"}
-      className="flex flex-col gap-[20px] justify-center p-4"
+      className="w-full flex flex-col gap-[20px] justify-center p-4"
     >
       {posts.length > 0 ? (
         mixedPosts.map((item, index) => renderItem(item, index))

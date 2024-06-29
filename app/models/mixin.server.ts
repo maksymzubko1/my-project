@@ -13,31 +13,47 @@ export type { Mixin, MixinType, PageType, DisplayOn } from "@prisma/client";
 export async function getRandomMixinList({ page, search, postIds }: IMixinListProps): Promise<TMixinRandom[]> {
   let where = { draft: false };
 
+  console.log(page);
   switch (page) {
     case "search":
-      where["NOT"] = { displayOn: "LIST" };
+      where["NOT"] = [{ displayOn: "LIST" }];
       break;
     case "list":
-      where["NOT"] = { displayOn: "SEARCH", pageType: "TAG_FILTER" };
+      where["NOT"] = [{ displayOn: "SEARCH" }, { pageType: "TAG_FILTER" }];
       break;
     case "tag":
-      where["NOT"] = { displayOn: "SEARCH", pageType: "MAIN" };
+      where["NOT"] = [{ displayOn: "SEARCH" }, { pageType: "MAIN" }];
       break;
   }
 
   if (postIds && postIds.length > 0) {
-    where["NOT"] = {
-      ...where["NOT"], postId: {
-        in: postIds
-      }
-    };
+    where["NOT"] =
+      [
+        ...where["NOT"],
+        {
+          AND: [
+            {
+              NOT: {
+                postId: null
+              }
+            },
+            {
+              postId: {
+                in: postIds
+              }
+            }
+          ]
+        }
+      ];
   }
 
   let idList = await prisma.mixin.findMany({
     where,
     select: {
       id: true,
-      regex: true
+      regex: true,
+      displayOn: true,
+      postId: true
     }
   });
 

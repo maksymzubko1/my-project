@@ -43,7 +43,7 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
           <Form
             method={"GET"}
             className="flex items-center w-full px-2 gap-2 text-black [&>button]:hidden md:[&>button]:flex"
-            action={"search"}
+            action={"/search"}
           >
             <Input
               fullWidth

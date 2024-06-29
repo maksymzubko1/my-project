@@ -2,7 +2,6 @@ import type { MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import Pagination from "~/components/Pagination/Pagination";
-import Post from "~/components/Post/Post";
 import UserHeader from "~/components/UserHeader/Header";
 
 export const meta: MetaFunction = () => [{ title: "Remix Posts" }];
