@@ -13,7 +13,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     await getPostListItemsWithMixing({
       page: page ? parseInt(page) : undefined,
       tag: params.tag,
-      pageName: "tag"
+      pageName: "tag",
     });
   return json({ items, mixin, currentPage, totalPages, hasNext, hasPrev });
 };

@@ -9,12 +9,12 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from "~/components/shadcn/ui/command";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "~/components/shadcn/ui/popover";
 import { cn } from "~/lib/utils";
 
@@ -40,18 +40,18 @@ interface SelectProps {
 }
 
 const Select = ({
-                  label,
-                  name,
-                  items,
-                  value,
-                  disableFilter,
-                  disabled,
-                  onChange,
-                  showSelected,
-                  placeholder,
-                  error,
-                  id
-                }: SelectProps) => {
+  label,
+  name,
+  items,
+  value,
+  disableFilter,
+  disabled,
+  onChange,
+  showSelected,
+  placeholder,
+  error,
+  id,
+}: SelectProps) => {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -83,7 +83,7 @@ const Select = ({
               {showSelected !== false
                 ? value
                   ? items.find((item) => item.value === value)?.label ||
-                  items.find((item) => item.value === value)?.value
+                    items.find((item) => item.value === value)?.value
                   : placeholder || "Select..."
                 : null}
               <CaretSortIcon className="h-4 w-4 shrink-0 opacity-50" />
@@ -113,12 +113,13 @@ const Select = ({
                     }}
                   >
                     <span className="flex items-center justify-between">
-                      {item.icon && <item.icon/>} {item.label || item.value}
+                      {item.icon ? <item.icon /> : null}{" "}
+                      {item.label || item.value}
                     </span>
                     <CheckIcon
                       className={cn(
                         "ml-auto h-4 w-4",
-                        value === item.value ? "opacity-100" : "opacity-0"
+                        value === item.value ? "opacity-100" : "opacity-0",
                       )}
                     />
                   </CommandItem>

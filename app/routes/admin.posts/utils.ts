@@ -1,5 +1,3 @@
-import { MenubarItem } from "~/components/Menubar/Menubar";
-import { Post } from "~/models/posts.server";
 import {
   EyeOpenIcon,
   EyeNoneIcon,
@@ -10,8 +8,12 @@ import {
   Pencil2Icon,
   Pencil1Icon,
   RocketIcon,
-  TriangleDownIcon, TriangleUpIcon, ArrowUpIcon, ArrowDownIcon
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from "@radix-ui/react-icons";
+
+import { MenubarItem } from "~/components/Menubar/Menubar";
+import { Post } from "~/models/posts.server";
 
 export function generateItems(
   post: Pick<Post, "id" | "status" | "title" | "isDeleted">,
@@ -78,7 +80,6 @@ export function getIcon(status: Post["status"], isDeleted = false) {
     return ArchiveIcon;
   }
 
-
   switch (status) {
     case "DRAFTED":
       return Pencil1Icon;
@@ -105,48 +106,48 @@ export const sortOptions = [
     id: "0",
     value: "id_asc",
     label: "ID",
-    icon: ArrowDownIcon
+    icon: ArrowDownIcon,
   },
   {
     id: "1",
     value: "id_desc",
     label: "ID",
-    icon: ArrowUpIcon
+    icon: ArrowUpIcon,
   },
   {
     id: "2",
     value: "datecreate_asc",
     label: "Date Created",
-    icon: ArrowDownIcon
+    icon: ArrowDownIcon,
   },
   {
     id: "3",
     value: "datecreate_desc",
     label: "Date Created",
-    icon: ArrowUpIcon
+    icon: ArrowUpIcon,
   },
   {
     id: "2",
     value: "dateupdate_asc",
     label: "Date Updated",
-    icon: ArrowDownIcon
+    icon: ArrowDownIcon,
   },
   {
     id: "3",
     value: "dateupdate_desc",
     label: "Date Updated",
-    icon: ArrowUpIcon
+    icon: ArrowUpIcon,
   },
   {
     id: "4",
     value: "name_asc",
     label: "Title",
-    icon: ArrowDownIcon
+    icon: ArrowDownIcon,
   },
   {
     id: "5",
     value: "name_desc",
     label: "Title",
-    icon: ArrowUpIcon
+    icon: ArrowUpIcon,
   },
 ];

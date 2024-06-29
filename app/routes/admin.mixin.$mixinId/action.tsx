@@ -17,8 +17,6 @@ import AwsService from "~/services/aws.service";
 import { requireUserId } from "~/session.server";
 import { isEmpty, isRegex, isURL } from "~/utils";
 
-
-
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   await requireUserId(request);
   invariant(params.mixinId, "postId not found");
@@ -95,7 +93,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     errors = { ...errors, displayOn: "DisplayOn is incorrect" };
   }
 
-  if (isEmpty(pageType) && (!isEmpty(displayOn) && displayOn !== "SEARCH")) {
+  if (isEmpty(pageType) && !isEmpty(displayOn) && displayOn !== "SEARCH") {
     errors = { ...errors, pageType: "Page type is required" };
   }
 
@@ -144,8 +142,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (
     MixinType[type] === "IMAGE" &&
-    (!uploadedFile || typeof uploadedFile !== "string")
-    && !mixin.image
+    (!uploadedFile || typeof uploadedFile !== "string") &&
+    !mixin.image
   ) {
     errors = { ...errors, image: "Image is required" };
   }
@@ -171,7 +169,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       regex,
       priority: priorityInt,
       linkForText,
-      linkForImage
+      linkForImage,
     });
 
     return {

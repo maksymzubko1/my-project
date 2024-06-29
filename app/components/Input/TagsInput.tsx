@@ -1,8 +1,8 @@
+import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useCallback, useState } from "react";
 
 import HiddenInput from "~/components/Input/HiddenInput";
 import { Badge } from "~/components/shadcn/ui/badge";
-import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 
 interface TagsInputProps {
   error?: string;
@@ -64,7 +64,7 @@ const TagsInput = ({
                   className="tag-remove ms-3 transition-all hover:text-red-700"
                   onClick={(event) => handleTagRemove(event, tag)}
                 >
-                  <Cross1Icon/>
+                  <Cross1Icon />
                 </button>
               </Badge>
             </li>
@@ -82,7 +82,7 @@ const TagsInput = ({
               className="transtion-all hover:text-blue-500"
               onClick={handleTagAdd}
             >
-              <PlusIcon/>
+              <PlusIcon />
             </button>
           </li>
         </ul>

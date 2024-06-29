@@ -1,3 +1,4 @@
+import { DashboardIcon, ExitIcon, PersonIcon } from "@radix-ui/react-icons";
 import { Form, useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
 
@@ -5,7 +6,6 @@ import Button from "~/components/Button/Button";
 import Input from "~/components/Input/Input";
 import MenubarComponent from "~/components/Menubar/Menubar";
 import { useOptionalUser } from "~/utils";
-import { DashboardIcon, ExitIcon, PersonIcon } from "@radix-ui/react-icons";
 
 interface HeaderProps {
   hideSearch?: boolean;
@@ -66,7 +66,7 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
             </Button>
           ) : (
             <MenubarComponent items={getItems()} id={"user-bar"}>
-              <PersonIcon color={"black"}/>
+              <PersonIcon color={"black"} />
             </MenubarComponent>
           )
           // <Button variant={"secondary-2"} link={{ to: "/logout" }}>

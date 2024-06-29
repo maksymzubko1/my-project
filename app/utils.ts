@@ -132,7 +132,6 @@ export function getRandomValuesFromArray(arr, maxLength) {
   return Array.from(values);
 }
 
-
 export function isEmpty(value: string | string[] | object | null | undefined) {
   if (value === null || value === undefined) {
     return true;

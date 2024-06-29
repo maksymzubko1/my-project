@@ -17,7 +17,6 @@ import AwsService from "~/services/aws.service";
 import { requireUserId } from "~/session.server";
 import { isEmpty, isRegex, isURL } from "~/utils";
 
-
 export const action = async ({ request }: ActionFunctionArgs) => {
   await requireUserId(request);
 
@@ -86,7 +85,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, displayOn: "DisplayOn is incorrect" };
   }
 
-  if (isEmpty(pageType) && (!isEmpty(displayOn) && displayOn !== "SEARCH") && !isDraft) {
+  if (
+    isEmpty(pageType) &&
+    !isEmpty(displayOn) &&
+    displayOn !== "SEARCH" &&
+    !isDraft
+  ) {
     errors = { ...errors, pageType: "Page type is required" };
   }
 
@@ -129,7 +133,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const uploadedFile =
-    typeof image !== "string" &&  image
+    typeof image !== "string" && image
       ? ((await AwsService.uploadImage(image as File)) as string)
       : undefined;
 
@@ -162,7 +166,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       regex,
       priority: priorityInt,
       linkForImage,
-      linkForText
+      linkForText,
     },
     isDraft,
   );

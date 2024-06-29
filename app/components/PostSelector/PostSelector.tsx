@@ -1,7 +1,5 @@
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import React, {
-  useId,
-} from "react";
+import React, { useId } from "react";
 
 import { Button } from "~/components/shadcn/ui/button";
 import {

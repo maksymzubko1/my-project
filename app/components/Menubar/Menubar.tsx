@@ -50,11 +50,21 @@ const MenubarComponent = ({ children, items, id }: MenubarProps) => {
                       to={item.link}
                       className="flex items-center gap-2 w-full"
                     >
-                      {typeof item.icon === "string" ? item.icon : <item.icon />} {item.text}
+                      {typeof item.icon === "string" ? (
+                        item.icon
+                      ) : (
+                        <item.icon />
+                      )}{" "}
+                      {item.text}
                     </Link>
                   ) : (
                     <span className="flex items-center gap-2">
-                      {typeof item.icon === "string" ? item.icon : <item.icon />} {item.text}
+                      {typeof item.icon === "string" ? (
+                        item.icon
+                      ) : (
+                        <item.icon />
+                      )}{" "}
+                      {item.text}
                     </span>
                   )}
                 </Tooltip>

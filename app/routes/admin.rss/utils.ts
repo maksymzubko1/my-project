@@ -1,6 +1,13 @@
+import {
+  PauseIcon,
+  Pencil2Icon,
+  ResumeIcon,
+  TimerIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
+
 import { MenubarItem } from "~/components/Menubar/Menubar";
 import { RSSSettings } from "~/models/rss.server";
-import { PauseIcon, Pencil2Icon, ResumeIcon, TimerIcon, TrashIcon } from "@radix-ui/react-icons";
 
 export function generateItems(
   rss: Pick<RSSSettings, "id" | "name" | "isPaused">,

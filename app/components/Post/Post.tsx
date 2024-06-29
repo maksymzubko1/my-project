@@ -21,12 +21,16 @@ const Post = ({
   image,
   title,
   createdAt,
-  isEmbed
+  isEmbed,
 }: PostProps) => {
   return (
     <div
       id={id}
-      className={isEmbed ? "w-full h-full flex flex-col gap-2 pt-2" : "bg-muted px-1 md:px-3 py-2 w-full min-h-[100px] md:max-h-[450px] flex border flex-col gap-2 rounded"}
+      className={
+        isEmbed
+          ? "w-full h-full flex flex-col gap-2 pt-2"
+          : "bg-muted px-1 md:px-3 py-2 w-full min-h-[100px] md:max-h-[450px] flex border flex-col gap-2 rounded"
+      }
     >
       <h2 className="text-lg">{title}</h2>
       <div className="w-full h-full flex gap-2 md:flex-row flex-col">

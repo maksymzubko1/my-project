@@ -67,5 +67,5 @@ export type TMixinRandom = Pick<
       id: Media["id"];
       url: Media["url"];
     };
-  }
+  };
 };

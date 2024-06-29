@@ -3,12 +3,12 @@ import { Form, useLoaderData, useLocation } from "@remix-run/react";
 
 import Button from "~/components/Button/Button";
 import Input from "~/components/Input/Input";
-import Pagination from "~/components/Pagination/Pagination"
+import Pagination from "~/components/Pagination/Pagination";
+import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
 import UserHeader from "~/components/UserHeader/Header";
 import { getSearchParams } from "~/utils";
 
 import { loader as routeLoader } from "./loader";
-import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
 
 export const meta: MetaFunction = () => [{ title: "Remix Posts - Search" }];
 
@@ -47,10 +47,7 @@ export default function Index() {
               Search result for: {query}
             </h2>
           ) : null}
-          <PostsWithMixins
-            posts={items}
-            mixins={mixin}
-          />
+          <PostsWithMixins posts={items} mixins={mixin} />
           <section id={"pagination"}>
             <Pagination
               hasPrev={hasPrev}

@@ -1,6 +1,13 @@
+import {
+  MixIcon,
+  Pencil1Icon,
+  Pencil2Icon,
+  RocketIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
+
 import { MenubarItem } from "~/components/Menubar/Menubar";
 import { Mixin } from "~/models/mixin.server";
-import { MixIcon, Pencil1Icon, Pencil2Icon, RocketIcon, TrashIcon } from "@radix-ui/react-icons";
 
 export function generateItems(
   mixin: Pick<Mixin, "id" | "name" | "draft">,
