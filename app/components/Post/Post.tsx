@@ -11,6 +11,7 @@ interface PostProps {
   tagPost: { tag: { name: string } }[];
   title: string;
   createdAt: Date;
+  isEmbed?: boolean;
 }
 
 const Post = ({
@@ -20,11 +21,12 @@ const Post = ({
   image,
   title,
   createdAt,
+  isEmbed
 }: PostProps) => {
   return (
     <div
       id={id}
-      className="bg-muted px-1 md:px-3 py-2 w-full min-h-[100px] md:max-h-[350px] flex border flex-col gap-2 rounded"
+      className={isEmbed ? "w-full h-full flex flex-col gap-2 pt-2" : "bg-muted px-1 md:px-3 py-2 w-full min-h-[100px] md:max-h-[450px] flex border flex-col gap-2 rounded"}
     >
       <h2 className="text-lg">{title}</h2>
       <div className="w-full h-full flex gap-2 md:flex-row flex-col">

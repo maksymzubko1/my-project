@@ -31,7 +31,7 @@ const Form = () => {
   }, []);
 
   const onSubmitFunction = useCallback(
-    (event: FormEvent<HTMLFormElement> | null, action?: "draft") => {
+    (event: FormEvent<HTMLFormElement> | null, action?: "isDraft") => {
       event?.preventDefault();
       onSubmit(event, action);
     },
@@ -39,10 +39,8 @@ const Form = () => {
   );
 
   const handleClickDraft = useCallback(() => {
-    onSubmitFunction(null, "draft");
+    onSubmitFunction(null, "isDraft");
   }, [onSubmitFunction]);
-
-  console.log(values);
 
   return (
     <RemixForm
@@ -85,20 +83,20 @@ const Form = () => {
           placeholder={"Select image"}
         />
         <Input
-          name={"link"}
+          name={"linkForImage"}
           inputSettings={{ variant: "input" }}
           label={"Link"}
           id={"link"}
-          error={errors?.link}
-          value={values.link}
-          onChange={(value) => onChange(value, "link")}
+          error={errors?.linkForImage}
+          value={values.linkForImage}
+          onChange={(value) => onChange(value, "linkForImage")}
         />
       </> : null}
 
       {values.type === "TEXT" ? <>
         <Input
           name={"text"}
-          inputSettings={{ variant: "input" }}
+          inputSettings={{ variant: "textarea" }}
           label={"Text"}
           id={"text"}
           error={errors?.text}
@@ -115,13 +113,13 @@ const Form = () => {
           onChange={(value) => onChange(value, "textForLink")}
         />
         <Input
-          name={"link"}
+          name={"linkForText"}
           inputSettings={{ variant: "input" }}
           label={"Link"}
           id={"link"}
-          error={errors?.link}
-          value={values.link}
-          onChange={(value) => onChange(value, "link")}
+          error={errors?.linkForText}
+          value={values.linkForText}
+          onChange={(value) => onChange(value, "linkForText")}
         />
       </> : null}
 

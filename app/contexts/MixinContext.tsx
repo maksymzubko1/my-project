@@ -4,13 +4,14 @@ import { createContext } from "react";
 import { FormProps } from "~/contexts/types";
 
 export interface MixinFormState {
-  type?: Mixin["type"];
+  type?: Mixin["type"] | null;
   name?: string;
   draft: boolean;
-  link?: string;
+  linkForImage?: string;
+  linkForText?: string;
   text?: string;
-  displayOn?: Mixin["displayOn"];
-  pageType: Mixin["pageType"];
+  displayOn?: Mixin["displayOn"] | null;
+  pageType?: Mixin["pageType"] | null;
   priority?: number;
   regex?: string;
   image?: string;
@@ -36,10 +37,11 @@ export const MixinFormContext = createContext<
     console.log("on submit");
   },
   values: {
-    type: "",
+    type: null,
     name: "",
     draft: false,
-    link: "",
+    linkForText: "",
+    linkForImage: "",
     text: "",
     displayOn: null,
     pageType: null,

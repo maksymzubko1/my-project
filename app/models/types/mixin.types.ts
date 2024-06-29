@@ -1,4 +1,4 @@
-import { Media, Mixin } from "@prisma/client";
+import { Media, Mixin, Post, Tag } from "@prisma/client";
 
 export interface IMixinListProps {
   page: "search" | "list" | "tag";
@@ -19,7 +19,8 @@ export type TMixin = Omit<Mixin, "createdAt" | "updatedAt"> & {
 
 export type TMixinCreate = Pick<
   Mixin,
-  | "link"
+  | "linkForText"
+  | "linkForImage"
   | "type"
   | "displayOn"
   | "pageType"
@@ -33,7 +34,8 @@ export type TMixinCreate = Pick<
 
 export type TMixinUpdate = Pick<
   Mixin,
-  | "link"
+  | "linkForImage"
+  | "linkForText"
   | "type"
   | "displayOn"
   | "pageType"
@@ -44,3 +46,26 @@ export type TMixinUpdate = Pick<
   | "name"
   | "postId"
 > & { image: string };
+
+export type TMixinRandom = Pick<
+  Mixin,
+  | "id"
+  | "linkForImage"
+  | "linkForText"
+  | "type"
+  | "textForLink"
+  | "text"
+  | "name"
+> & { image: Media } & {
+  post: Post & {
+    tagPost: {
+      tag: {
+        name: Tag["name"];
+      };
+    }[];
+    image: {
+      id: Media["id"];
+      url: Media["url"];
+    };
+  }
+};

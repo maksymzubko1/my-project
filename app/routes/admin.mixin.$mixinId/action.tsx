@@ -61,7 +61,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   );
 
   const name = formData.get("name") as string;
-  const link = formData.get("link") as string;
+  const linkForImage = formData.get("linkForImage") as string;
+  const linkForText = formData.get("linkForText") as string;
   const type = formData.get("type") as string;
   const text = formData.get("text") as string;
   const textForLink = formData.get("textForLink") as string;
@@ -102,8 +103,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     errors = { ...errors, pageType: "Page type is incorrect" };
   }
 
-  if (!isEmpty(link) && !isURL(link)) {
-    errors = { ...errors, link: "Incorrect URL" };
+  if (!isEmpty(linkForImage) && !isURL(linkForImage)) {
+    errors = { ...errors, linkForImage: "Incorrect URL" };
+  }
+
+  if (!isEmpty(linkForText) && !isURL(linkForText)) {
+    errors = { ...errors, linkForText: "Incorrect URL" };
   }
 
   if (!isEmpty(regex) && !isRegex(regex)) {
@@ -137,7 +142,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       ? ((await AwsService.uploadImage(image as File)) as string)
       : undefined;
 
-  console.log(uploadedFile, typeof uploadedFile, !uploadedFile);
   if (
     MixinType[type] === "IMAGE" &&
     (!uploadedFile || typeof uploadedFile !== "string")
@@ -166,7 +170,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       textForLink,
       regex,
       priority: priorityInt,
-      link,
+      linkForText,
+      linkForImage
     });
 
     return {

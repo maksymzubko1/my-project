@@ -3,14 +3,14 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 import { getPost } from "~/models/posts.server";
-import { IMixinListProps, TMixin, TMixinCreate, TMixinUpdate } from "~/models/types/mixin.types";
+import { IMixinListProps, TMixin, TMixinCreate, TMixinRandom, TMixinUpdate } from "~/models/types/mixin.types";
 
 import SortOrder = Prisma.SortOrder;
 import { getRandomValuesFromArray } from "~/utils";
 
 export type { Mixin, MixinType, PageType, DisplayOn } from "@prisma/client";
 
-export async function getRandomMixinList({ page, search, postIds }: IMixinListProps) {
+export async function getRandomMixinList({ page, search, postIds }: IMixinListProps): Promise<TMixinRandom[]> {
   let where = { draft: false };
 
   switch (page) {
@@ -33,16 +33,22 @@ export async function getRandomMixinList({ page, search, postIds }: IMixinListPr
     };
   }
 
-  if (search && search.length > 0 && page === "search") {
-    where["search"] = search;
-  }
-
-  const idList = await prisma.mixin.findMany({
+  let idList = await prisma.mixin.findMany({
     where,
     select: {
-      id: true
+      id: true,
+      regex: true
     }
   });
+
+  if (search && search.length > 0 && page === "search") {
+    idList = idList.filter(item => {
+      if (item.regex && item.regex?.length > 0) {
+        return (item.regex as RegExp)?.test(search);
+      }
+      return true;
+    });
+  }
 
   const settings = await getMixinSettings();
   let maxLength;
@@ -58,9 +64,39 @@ export async function getRandomMixinList({ page, search, postIds }: IMixinListPr
 
   return prisma.mixin.findMany({
     where,
-    include: {
-      post: true,
-      image: true
+    select: {
+      id: true,
+      type: true,
+      name: true,
+      text: true,
+      textForLink: true,
+      linkForImage: true,
+      linkForText: true,
+      image: true,
+      post: {
+        select: {
+          id: true,
+          body: true,
+          title: true,
+          description: true,
+          status: true,
+          image: {
+            select: {
+              id: true,
+              url: true
+            }
+          },
+          tagPost: {
+            select: {
+              tag: {
+                select: {
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      }
     },
     orderBy: {
       priority: SortOrder.desc
@@ -74,7 +110,8 @@ export async function getMixin({ id }: Pick<Mixin, "id">): Promise<TMixin> {
       id: true,
       type: true,
       name: true,
-      link: true,
+      linkForImage: true,
+      linkForText: true,
       text: true,
       displayOn: true,
       textForLink: true,
@@ -148,7 +185,8 @@ export async function createMixin(
   {
     type,
     text,
-    link,
+    linkForImage,
+    linkForText,
     displayOn,
     pageType,
     priority,
@@ -163,7 +201,8 @@ export async function createMixin(
   const mixinData: any = {
     type,
     text,
-    link,
+    linkForImage,
+    linkForText,
     name,
     displayOn,
     pageType,
@@ -199,7 +238,8 @@ export async function updateMixin(
   {
     type,
     text,
-    link,
+    linkForImage,
+    linkForText,
     displayOn,
     pageType,
     priority,
@@ -215,7 +255,8 @@ export async function updateMixin(
   const mixinData: any = {
     type,
     text,
-    link,
+    linkForImage,
+    linkForText,
     name,
     displayOn,
     textForLink,

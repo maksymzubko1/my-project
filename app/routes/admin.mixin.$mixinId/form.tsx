@@ -10,7 +10,7 @@ import { MixinFormContext } from "~/contexts/MixinContext";
 import {
   mixinDisplayOn,
   mixinPageType,
-  mixinTypes,
+  mixinTypes
 } from "~/routes/admin.mixin.new/utils";
 
 const Form = () => {
@@ -35,7 +35,7 @@ const Form = () => {
       event?.preventDefault();
       onSubmit(event);
     },
-    [onSubmit],
+    [onSubmit]
   );
 
   return (
@@ -45,7 +45,7 @@ const Form = () => {
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        width: "100%",
+        width: "100%"
       }}
     >
       <Input
@@ -68,64 +68,64 @@ const Form = () => {
       />
 
       {values.type === "IMAGE" ? <>
-          <FileUpload
-            name={"file"}
-            id={"file"}
-            label={"Image"}
-            error={errors?.image}
-            initialValue={values.image}
-            onChange={(value) => onChange(value, "image")}
-            value={values.image}
-            placeholder={"Select image"}
-          />
-          <Input
-            name={"link"}
-            inputSettings={{ variant: "input" }}
-            label={"Link"}
-            id={"link"}
-            error={errors?.link}
-            value={values.link}
-            onChange={(value) => onChange(value, "link")}
-          />
-        </> : null}
+        <FileUpload
+          name={"file"}
+          id={"file"}
+          label={"Image"}
+          error={errors?.image}
+          initialValue={values.image}
+          onChange={(value) => onChange(value, "image")}
+          value={values.image}
+          placeholder={"Select image"}
+        />
+        <Input
+          name={"linkForImage"}
+          inputSettings={{ variant: "input" }}
+          label={"Link"}
+          id={"link"}
+          error={errors?.linkForImage}
+          value={values.linkForImage}
+          onChange={(value) => onChange(value, "linkForImage")}
+        />
+      </> : null}
 
       {values.type === "TEXT" ? <>
-          <Input
-            name={"text"}
-            inputSettings={{ variant: "input" }}
-            label={"Text"}
-            id={"text"}
-            error={errors?.text}
-            value={values.text}
-            onChange={(value) => onChange(value, "text")}
-          />
-          <Input
-            name={"textForLink"}
-            inputSettings={{ variant: "input" }}
-            label={"Text for link"}
-            id={"textForLink"}
-            error={errors?.textForLink}
-            value={values.textForLink}
-            onChange={(value) => onChange(value, "textForLink")}
-          />
-          <Input
-            name={"link"}
-            inputSettings={{ variant: "input" }}
-            label={"Link"}
-            id={"link"}
-            error={errors?.link}
-            value={values.link}
-            onChange={(value) => onChange(value, "link")}
-          />
-        </> : null}
+        <Input
+          name={"text"}
+          inputSettings={{ variant: "textarea" }}
+          label={"Text"}
+          id={"text"}
+          error={errors?.text}
+          value={values.text}
+          onChange={(value) => onChange(value, "text")}
+        />
+        <Input
+          name={"textForLink"}
+          inputSettings={{ variant: "input" }}
+          label={"Text for link"}
+          id={"textForLink"}
+          error={errors?.textForLink}
+          value={values.textForLink}
+          onChange={(value) => onChange(value, "textForLink")}
+        />
+        <Input
+          name={"linkForText"}
+          inputSettings={{ variant: "input" }}
+          label={"Link"}
+          id={"link"}
+          error={errors?.linkForText}
+          value={values.linkForText}
+          onChange={(value) => onChange(value, "linkForText")}
+        />
+      </> : null}
 
       {values.type === "POST" ? <PostSelector
-          error={errors?.postId}
-          value={values.postId}
-          items={items}
-          onChange={(value) => onChange(value, "postId")}
-          isLoading={isLoading}
-        /> : null}
+        error={errors?.postId}
+        value={values.postId}
+        items={items}
+        onChange={(value) => onChange(value, "postId")}
+        isLoading={isLoading}
+      /> : null}
 
       {values.type && values.type !== "" ? <>
         <Select
@@ -139,7 +139,7 @@ const Form = () => {
 
         {values.displayOn && values.displayOn !== "" && values.displayOn !== "SEARCH" &&
           <>
-            <hr className="my-3"/>
+            <hr className="my-3" />
             <h4 className="text-gray-700">Settings for <bold>List and Tag</bold> pages</h4>
             <Select
               error={errors?.pageType}

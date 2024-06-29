@@ -41,6 +41,7 @@ export default function NewMixinPage() {
       const formData = new FormData();
 
       if (action) {
+        console.log(action);
         formData.set("action", action);
       }
 

@@ -50,7 +50,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   );
 
   const name = formData.get("name") as string;
-  const link = formData.get("link") as string;
+  const linkForImage = formData.get("linkForImage") as string;
+  const linkForText = formData.get("linkForText") as string;
   const type = formData.get("type") as string;
   const text = formData.get("text") as string;
   const textForLink = formData.get("textForLink") as string;
@@ -61,7 +62,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const regex = formData.get("regex") as string;
   const postId = formData.get("postId") as string;
 
-  const isDraft = !!formData.get("draft");
+  const isDraft = !!formData.get("isDraft");
 
   let errors = {};
 
@@ -76,8 +77,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (!isEmpty(type) && !MixinType[type]) {
     errors = { ...errors, type: "Type is incorrect" };
   }
-
-  console.log(isDraft);
 
   if (isEmpty(displayOn) && !isDraft) {
     errors = { ...errors, displayOn: "DisplayOn is required" };
@@ -95,8 +94,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, pageType: "Page type is incorrect" };
   }
 
-  if (!isEmpty(link) && !isURL(link)) {
-    errors = { ...errors, link: "Incorrect URL" };
+  if (!isEmpty(linkForImage) && !isURL(linkForImage)) {
+    errors = { ...errors, linkForImage: "Incorrect URL" };
+  }
+
+  if (!isEmpty(linkForText) && !isURL(linkForText)) {
+    errors = { ...errors, linkForText: "Incorrect URL" };
   }
 
   if (!isEmpty(regex) && !isRegex(regex)) {
@@ -158,9 +161,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       textForLink,
       regex,
       priority: priorityInt,
-      link,
+      linkForImage,
+      linkForText
     },
-    !!isDraft,
+    isDraft,
   );
 
   return redirect(`/admin/mixin/${mixin.id}`);
