@@ -2,7 +2,7 @@ import { RSSFormState } from "~/contexts/RSSContext";
 
 export const loader = async () => {
   return {
-    mixin: {
+    rss: {
       name: "",
       source: "",
       interval: "everyMinute",

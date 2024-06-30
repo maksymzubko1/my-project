@@ -4,6 +4,12 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
+  const usersCount = await prisma.user.count();
+
+  if(usersCount > 0){
+    return;
+  }
+
   const email = "test_user@remix.run";
 
   // cleanup the existing database

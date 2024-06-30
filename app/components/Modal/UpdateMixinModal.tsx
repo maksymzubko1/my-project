@@ -50,7 +50,9 @@ const UpdateMixinModal = ({
               type: "number",
             }}
             id={"intMixinPerList"}
-            initialValue={String(initialData.mixinPerList) || undefined}
+            initialValue={
+              initialData ? String(initialData.mixinPerList) : undefined
+            }
           />
           <Input
             name={"mixinPerSearch"}
@@ -64,7 +66,9 @@ const UpdateMixinModal = ({
               type: "number",
             }}
             id={"mixinPerSearch"}
-            initialValue={String(initialData.mixinPerSearch) || undefined}
+            initialValue={
+              initialData ? String(initialData.mixinPerSearch) : undefined
+            }
           />
         </div>
       </Modal>

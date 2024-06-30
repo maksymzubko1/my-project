@@ -14,7 +14,9 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: remix_news_app
     restart: always
     env_file:
