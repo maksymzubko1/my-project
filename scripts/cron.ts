@@ -62,7 +62,7 @@ scheduleJob("* * * * *", async () => {
     const filteredRss = rssList.filter(rss => moment()
       .diff(moment(rss.lastFetched), "minutes") >= getMinutesFromInterval(rss.interval));
 
-    // console.log(`${filteredRss.length} rss filtered...`);
+    console.log(`${filteredRss.length} rss filtered...`);
     // console.log(`start to fetch rss...`);
 
     for (const rss of filteredRss) {
@@ -70,6 +70,12 @@ scheduleJob("* * * * *", async () => {
         await RssService.isValidRss(rss.source);
         // console.log(`fetching ${rss.id} rss`);
         const result = await RssService.fetchRssAndParseToJson(rss.source, rss.fieldMatching, rss.stopTags);
+        await prisma.rSSSettings.update({
+          where: { id: rss.id },
+          data: {
+            lastFetched: new Date()
+          }
+        })
 
         const filteredResult = result.filter(item => item?.["body"].length > 0 && item?.["title"].length > 0);
 
