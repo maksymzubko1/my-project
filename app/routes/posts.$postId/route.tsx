@@ -2,30 +2,22 @@ import type { MetaFunction } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
-  useNavigation,
   useRouteError,
 } from "@remix-run/react";
 
-import Spinner from "~/components/Spinner/Spinner";
 import UserHeader from "~/components/UserHeader/Header";
 
 import { loader as routeLoader } from "./loader";
 import styles from "./styles.module.css";
 
 export const meta: MetaFunction = (args) => {
-  return [{ title: `Remix Posts - Post ${args.params.postId}` }];
+  return [{ title: `Remix News - Post ${args.params.postId}` }];
 };
 
 export const loader = routeLoader;
 
 export default function PostPage() {
   const { post } = useLoaderData<typeof loader>();
-
-  const navigation = useNavigation();
-
-  if (navigation.state === "loading") {
-    return <Spinner size={"large"} />;
-  }
 
   return (
     <>

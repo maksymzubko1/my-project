@@ -1,7 +1,7 @@
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  MetaFunction,
+  MetaFunction
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
@@ -30,21 +30,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (!validateEmail(email)) {
     return json(
       { errors: { email: "Email is invalid", password: null } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
       { errors: { email: null, password: "Password is required" } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return json(
       { errors: { email: null, password: "Password is too short" } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -53,7 +53,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (!user) {
     return json(
       { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -61,11 +61,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     redirectTo,
     remember: remember === "on",
     request,
-    userId: user.id,
+    userId: user.id
   });
 };
 
-export const meta: MetaFunction = () => [{ title: "Login" }];
+export const meta: MetaFunction = () => [{
+  title: "Login Page - Remix News",
+  description: "Log in to access exclusive content and features.",
+  keywords: "login, sign in, user login, secure login"
+}];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
@@ -84,7 +88,7 @@ export default function LoginPage() {
               autoComplete: "email",
               variant: "input",
               autoFocus: true,
-              required: true,
+              required: true
             }}
             fullWidth
             id={"email"}
@@ -98,7 +102,7 @@ export default function LoginPage() {
               type: "password",
               autoComplete: "current-password",
               variant: "input",
-              required: true,
+              required: true
             }}
             fullWidth
             id={"email"}
@@ -133,7 +137,7 @@ export default function LoginPage() {
                 className="text-blue-500 underline"
                 to={{
                   pathname: "/join",
-                  search: searchParams.toString(),
+                  search: searchParams.toString()
                 }}
               >
                 Sign up

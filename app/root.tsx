@@ -30,21 +30,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
   return (
     <html lang="en" className="h-full min-h-screen">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <Meta />
-        <Links />
-        <title></title>
-      </head>
-      <body className="h-full">
-        <ToastProvider closeAfter={5000} position={"bottom-right"}>
-          <Outlet />
-        </ToastProvider>
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
+    <head>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <Meta />
+      <Links />
+      <meta name="description" content="The latest news on your website. Stay updated with the latest events." />
+      <meta name="keywords" content="news, latest news, events, breaking news, global news" />
+      <meta name="robots" content="index, follow" />
+      <meta name="author" content="Maksym Zubko" />
+    </head>
+    <body className="h-full">
+    <ToastProvider closeAfter={5000} position={"bottom-right"}>
+      <Outlet />
+    </ToastProvider>
+    <ScrollRestoration />
+    <Scripts />
+    <LiveReload />
+    </body>
     </html>
   );
 }
@@ -53,17 +56,23 @@ export function ErrorBoundary() {
   const error = useRouteError();
   return (
     <html lang={"en"}>
-      <head>
-        <title>Oops!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <div className="flex h-[100dvh] flex-col items-center justify-center gap-3">
-          <div className="rounded bg-gray-50 flex flex-col gap-3 p-6 max-w-lg">
-            <h1 className="text-center font-bold">
-              {isRouteErrorResponse(error)
-                ? `${error.status} ${error.statusText}`
+    <head>
+      <title>Oops!</title>
+      <Meta />
+      <Links />
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <meta name="description" content="The latest news on your website. Stay updated with the latest events." />
+      <meta name="keywords" content="news, latest news, events, breaking news, global news" />
+      <meta name="robots" content="index, follow" />
+      <meta name="author" content="Maksym Zubko" />
+    </head>
+    <body>
+    <div className="flex h-[100dvh] flex-col items-center justify-center gap-3">
+      <div className="rounded bg-gray-50 flex flex-col gap-3 p-6 max-w-lg">
+        <h1 className="text-center font-bold">
+          {isRouteErrorResponse(error)
+            ? `${error.status} ${error.statusText}`
                 : error instanceof Error
                   ? error.message
                   : "Unknown Error"}

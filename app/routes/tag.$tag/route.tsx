@@ -5,7 +5,11 @@ import Pagination from "~/components/Pagination/Pagination";
 import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
 import UserHeader from "~/components/UserHeader/Header";
 
-export const meta: MetaFunction = () => [{ title: "Remix Posts - By tag" }];
+export const meta: MetaFunction = () =>[{
+  title: "Posts by Tag - Remix News",
+  description: "Explore posts categorized by tags on Remix News.",
+  keywords: "posts, articles, blog, tags, categories",
+}];
 
 import { loader as routeLoader } from "./loader";
 

@@ -10,7 +10,10 @@ import { getSearchParams } from "~/utils";
 
 import { loader as routeLoader } from "./loader";
 
-export const meta: MetaFunction = () => [{ title: "Remix Posts - Search" }];
+export const meta: MetaFunction = () => [{
+  title: "Search - Remix News",
+  description: "Explore posts and news articles on Remix News.",
+}];
 
 export const loader = routeLoader;
 
