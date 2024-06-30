@@ -13,6 +13,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
+  if(post.status === "DRAFTED" || post.isDeleted){
+    throw new Response("Forbidden", { status: 403 });
+  }
+
   const tags = post.tagPost.map((tag) => tag.tag.name);
   return json({
     post: {

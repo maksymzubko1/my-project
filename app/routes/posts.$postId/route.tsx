@@ -56,5 +56,9 @@ export function ErrorBoundary() {
     return <div>Post not found</div>;
   }
 
+  if (error.status === 403) {
+    return <div>You do not have access to this post</div>;
+  }
+
   return <div>An unexpected error occurred: {error.statusText}</div>;
 }

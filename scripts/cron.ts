@@ -55,14 +55,20 @@ async function createPost({
 }
 
 scheduleJob("* * * * *", async () => {
-  console.log("cron started [RSS]");
+  console.log("📌 cron started [RSS]");
   try {
-    const rssList = await prisma.rSSSettings.findMany();
+    const rssList = await prisma.rSSSettings.findMany(
+      {
+        where: {
+          isPaused: false
+        }
+      }
+    );
 
     const filteredRss = rssList.filter(rss => moment()
       .diff(moment(rss.lastFetched), "minutes") >= getMinutesFromInterval(rss.interval));
 
-    console.log(`${filteredRss.length} rss filtered...`);
+    console.log(`🔼 ${filteredRss.length} rss filtered...`);
     // console.log(`start to fetch rss...`);
 
     for (const rss of filteredRss) {
@@ -75,11 +81,11 @@ scheduleJob("* * * * *", async () => {
           data: {
             lastFetched: new Date()
           }
-        })
+        });
 
         const filteredResult = result.filter(item => item?.["body"].length > 0 && item?.["title"].length > 0);
 
-        // console.log(`${filteredResult.length} rss items filtered...`);
+        console.log(`🔼 ${filteredResult.length} rss items filtered...`);
 
         for (const resultItem of filteredResult) {
           const itemsInDatabase = await prisma.post.findMany({
@@ -102,23 +108,23 @@ scheduleJob("* * * * *", async () => {
           }
         }
       } catch (e: any) {
-        console.log("failed to update rss", e?.message);
+        console.log("🛑 failed to update rss", e?.message);
       }
     }
 
-    console.log("cron ended [RSS]");
+    console.log("📌 cron ended [RSS]");
   } catch (e: any) {
-    console.log("cron error [RSS]: ", e?.message);
+    console.log("🛑 cron error [RSS]: ", e?.message);
   }
 });
 
 scheduleJob("* * * * *", async () => {
-  console.log("cron started [IMG]");
+  console.log("📌 cron started [IMG]");
   try {
     const unusedImages = await prisma.media.findMany({
       select: {
         url: true,
-        id: true,
+        id: true
       },
       where: {
         posts: {
@@ -128,7 +134,7 @@ scheduleJob("* * * * *", async () => {
     });
 
     for (const unusedImage of unusedImages) {
-      if(unusedImage.url && isURL(unusedImage.url)){
+      if (unusedImage.url && isURL(unusedImage.url)) {
         await AwsService.deleteFileByUrl(unusedImage.url);
       }
     }
@@ -136,14 +142,14 @@ scheduleJob("* * * * *", async () => {
     const deletedImages = await prisma.media.deleteMany({
       where: {
         id: {
-          in: unusedImages.map(img=>img.id)
+          in: unusedImages.map(img => img.id)
         }
       }
-    })
+    });
 
-    console.log(`${deletedImages.count} deleted [IMG]`);
-    console.log("cron ended [IMG]");
+    console.log(`🔼 ${deletedImages.count} deleted [IMG]`);
+    console.log("📌 cron ended [IMG]");
   } catch (e: any) {
-    console.log("cron error [IMG]: ", e?.message);
+    console.log("🛑 cron error [IMG]: ", e?.message);
   }
 });

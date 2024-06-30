@@ -114,7 +114,7 @@ export async function getPostListItemsWithMixing({
   tag?: string;
 }): Promise<PostMixedType> {
   let orderBy: any = { createdAt: SortOrder.desc };
-  let where: any = {};
+  let where: any = {isDeleted: false, status: "DEFAULT"};
 
   if (sort && sort.split("_").length === 2) {
     const sortBy = sort.split("_");
@@ -136,6 +136,7 @@ export async function getPostListItemsWithMixing({
 
   if (query && query.length > 0) {
     where = {
+      ...where,
       OR: [
         { title: { contains: query } },
         { body: { contains: query } },
