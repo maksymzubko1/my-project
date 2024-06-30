@@ -2,6 +2,7 @@ version: "3.7"
 services:
   postgres:
     image: postgres:latest
+    hostname: postgres
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -11,3 +12,15 @@ services:
       - "9432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: remix_news_app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "9541:3000"
+      - "9540:3010"
+    depends_on:
+      - postgres

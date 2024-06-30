@@ -3,10 +3,8 @@ import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { getPost } from "~/models/posts.server";
-import { requireUserId } from "~/session.server";
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  await requireUserId(request);
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.postId, "postId not found");
 
   const post = await getPost({ id: params.postId });

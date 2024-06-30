@@ -1,6 +1,11 @@
 import path from "node:path";
 
-import { PutObjectCommand, S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  S3Client,
+  S3ClientConfig,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import axios from "axios";
@@ -88,6 +93,30 @@ class AwsService {
     } catch (err) {
       // console.error('Error uploading file:', err);
       throw err;
+    }
+  }
+
+  async deleteFileByUrl(fileUrl: string) {
+    if (!fileUrl.includes(process.env.AWS_BUCKET)) {
+      console.log("ne nash");
+      return;
+    }
+
+    const parsedUrl = new URL(fileUrl);
+    const key = decodeURIComponent(parsedUrl.pathname).substring(1);
+
+    const params = {
+      Bucket: process.env.AWS_BUCKET,
+      Key: key,
+    };
+
+    try {
+      const client = this.client;
+      const command = new DeleteObjectCommand(params);
+      await client.send(command);
+      console.log(`File deleted successfully: ${fileUrl}`);
+    } catch (error) {
+      console.error(`Error deleting file: ${error.message}`);
     }
   }
 }

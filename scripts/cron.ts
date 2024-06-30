@@ -4,23 +4,24 @@ import { scheduleJob } from "node-schedule";
 
 import { prisma } from "~/db.server";
 import { createTags } from "~/models/tags.server";
+import AwsService from "~/services/aws.service";
 import RssService from "~/services/rss.service";
-import { getMinutesFromInterval } from "~/utils";
+import { getMinutesFromInterval, isURL } from "~/utils";
 
 async function createPost({
-                      body,
-                      title,
-                      image,
-                      tags,
-                      description,
-                      createdAt,
-                    }: Pick<Post, "body" | "title" | "description"> & {
+                            body,
+                            title,
+                            image,
+                            tags,
+                            description,
+                            createdAt
+                          }: Pick<Post, "body" | "title" | "description"> & {
   createdAt?: Post["createdAt"];
 } & {
   tags: Tag["name"][];
 } & {
   image?: string;
-},) {
+}) {
   const createdTags = await createTags({ tags });
 
   const postData: any = {
@@ -30,17 +31,17 @@ async function createPost({
     tagPost: {
       create: createdTags.map((tag) => ({
         tag: {
-          connect: { id: tag.id },
-        },
-      })),
-    },
+          connect: { id: tag.id }
+        }
+      }))
+    }
   };
 
   if (image) {
     postData.image = {
       create: {
-        url: image,
-      },
+        url: image
+      }
     };
   }
 
@@ -49,29 +50,30 @@ async function createPost({
   }
 
   return prisma.post.create({
-    data: postData,
+    data: postData
   });
 }
 
 scheduleJob("* * * * *", async () => {
-  console.log("cron started");
+  console.log("cron started [RSS]");
   try {
     const rssList = await prisma.rSSSettings.findMany();
 
-    const filteredRss = rssList.filter(rss => moment().diff(moment(rss.lastFetched), "minutes") >= getMinutesFromInterval(rss.interval));
+    const filteredRss = rssList.filter(rss => moment()
+      .diff(moment(rss.lastFetched), "minutes") >= getMinutesFromInterval(rss.interval));
 
-    console.log(`${filteredRss.length} rss filtered...`);
-    console.log(`start to fetch rss...`);
+    // console.log(`${filteredRss.length} rss filtered...`);
+    // console.log(`start to fetch rss...`);
 
     for (const rss of filteredRss) {
       try {
         await RssService.isValidRss(rss.source);
-        console.log(`fetching ${rss.id} rss`);
+        // console.log(`fetching ${rss.id} rss`);
         const result = await RssService.fetchRssAndParseToJson(rss.source, rss.fieldMatching, rss.stopTags);
 
         const filteredResult = result.filter(item => item?.["body"].length > 0 && item?.["title"].length > 0);
 
-        console.log(`${filteredResult.length} rss items filtered...`);
+        // console.log(`${filteredResult.length} rss items filtered...`);
 
         for (const resultItem of filteredResult) {
           const itemsInDatabase = await prisma.post.findMany({
@@ -98,8 +100,44 @@ scheduleJob("* * * * *", async () => {
       }
     }
 
-    console.log("cron ended");
+    console.log("cron ended [RSS]");
   } catch (e: any) {
-    console.log("cron error: ", e?.message);
+    console.log("cron error [RSS]: ", e?.message);
+  }
+});
+
+scheduleJob("* * * * *", async () => {
+  console.log("cron started [IMG]");
+  try {
+    const unusedImages = await prisma.media.findMany({
+      select: {
+        url: true,
+        id: true,
+      },
+      where: {
+        posts: {
+          none: {}
+        }
+      }
+    });
+
+    for (const unusedImage of unusedImages) {
+      if(unusedImage.url && isURL(unusedImage.url)){
+        await AwsService.deleteFileByUrl(unusedImage.url);
+      }
+    }
+
+    const deletedImages = await prisma.media.deleteMany({
+      where: {
+        id: {
+          in: unusedImages.map(img=>img.id)
+        }
+      }
+    })
+
+    console.log(`${deletedImages.count} deleted [IMG]`);
+    console.log("cron ended [IMG]");
+  } catch (e: any) {
+    console.log("cron error [IMG]: ", e?.message);
   }
 });
