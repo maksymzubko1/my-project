@@ -151,7 +151,7 @@ export async function getPostListItemsWithMixing({
         some: {
           tag: {
             name: {
-              in: tags
+              in: tags,
             },
           },
         },

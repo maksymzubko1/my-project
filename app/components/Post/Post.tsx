@@ -1,9 +1,9 @@
-import { Link, useLocation, useNavigate } from "@remix-run/react";
+import { useLocation, useNavigate } from "@remix-run/react";
 import moment from "moment";
+import { useCallback } from "react";
 
 import Button from "~/components/Button/Button";
 import { Badge } from "~/components/shadcn/ui/badge";
-import { useCallback } from "react";
 
 interface PostProps {
   id: string;
@@ -16,37 +16,43 @@ interface PostProps {
 }
 
 const Post = ({
-                id,
-                tagPost,
-                description,
-                image,
-                title,
-                createdAt,
-                isEmbed
-              }: PostProps) => {
+  id,
+  tagPost,
+  description,
+  image,
+  title,
+  createdAt,
+  isEmbed,
+}: PostProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const onClickTag = useCallback((tag: string) => {
-    const tagsList = [...new Set(location.pathname
-        .split("/")?.at(-1)
-        .split("&")
-        .filter((_item) => _item.length)
-      || []
-    )];
+  const onClickTag = useCallback(
+    (tag: string) => {
+      const tagsList = [
+        ...new Set(
+          location.pathname
+            .split("/")
+            ?.at(-1)
+            .split("&")
+            .filter((_item) => _item.length) || [],
+        ),
+      ];
 
-    if (tagsList.includes(tag)) {
-      const _tags = tagsList.filter(_tag => _tag !== tag).join("&");
-      if (_tags.length > 0) {
-        navigate({ pathname: `/tags/${_tags}` });
+      if (tagsList.includes(tag)) {
+        const _tags = tagsList.filter((_tag) => _tag !== tag).join("&");
+        if (_tags.length > 0) {
+          navigate({ pathname: `/tags/${_tags}` });
+        } else {
+          navigate({ pathname: "/" });
+        }
       } else {
-        navigate({ pathname: "/" });
+        tagsList.push(tag);
+        navigate({ pathname: `/tags/${tagsList.join("&")}` });
       }
-    } else {
-      tagsList.push(tag);
-      navigate({ pathname: `/tags/${tagsList.join("&")}` });
-    }
-  }, [location]);
+    },
+    [location],
+  );
 
   return (
     <div
@@ -70,16 +76,25 @@ const Post = ({
         {tagPost.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2">
             {tagPost.map((tagItem) => (
-              <Badge onClick={() => onClickTag(tagItem.tag.name)}
-                     className="cursor-pointer hover:bg-blue-200 transition-all" variant="outline">
+              <Badge
+                key={tagItem.tag.name}
+                onClick={() => onClickTag(tagItem.tag.name)}
+                className="cursor-pointer hover:bg-blue-200 transition-all"
+                variant="outline"
+              >
                 {tagItem.tag.name}
               </Badge>
             ))}
           </div>
         ) : null}
         <span className="flex justify-between items-center">
-          <Button variant={"secondary-2"}
-                  link={{ to: `/posts/${id}`, search: `backUrl=${location.pathname}${location.search}` }}>
+          <Button
+            variant={"secondary-2"}
+            link={{
+              to: `/posts/${id}`,
+              search: `backUrl=${location.pathname}${location.search}`,
+            }}
+          >
             View post
           </Button>
           {moment(createdAt).format("MM-DD-YYYY HH:mm")}

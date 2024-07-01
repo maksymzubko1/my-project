@@ -5,11 +5,11 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 import UserHeader from "~/components/UserHeader/Header";
 
 import { loader as routeLoader } from "./loader";
 import styles from "./styles.module.css";
-import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
 export const meta: MetaFunction = (args) => {
   return [{ title: `Remix News - Post ${args.params.postId}` }];
@@ -30,7 +30,7 @@ export default function PostPage() {
           dangerouslySetInnerHTML={{ __html: post.body }}
         />
       </main>
-      <ScrollToTop target={"body"}/>
+      <ScrollToTop target={"body"} />
     </>
   );
 }

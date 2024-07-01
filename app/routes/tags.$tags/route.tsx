@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 
 import Pagination from "~/components/Pagination/Pagination";
 import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 import UserHeader from "~/components/UserHeader/Header";
 
 export const meta: MetaFunction = () => [
@@ -14,7 +15,6 @@ export const meta: MetaFunction = () => [
 ];
 
 import { loader as routeLoader } from "./loader";
-import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
 export const loader = routeLoader;
 
@@ -38,7 +38,7 @@ export default function Index() {
           </section>
         </div>
       </main>
-      <ScrollToTop target={"main"}/>
+      <ScrollToTop target={"main"} />
     </>
   );
 }

@@ -59,9 +59,11 @@ const TagsInput = ({
           >
             {label}
           </label>
-          {tooltip ? <ToolTip tooltip={tooltip}>
+          {tooltip ? (
+            <ToolTip tooltip={tooltip}>
               <InfoCircledIcon />
-            </ToolTip> : null}
+            </ToolTip>
+          ) : null}
         </div>
       ) : null}
       <div className="tags-input flex-1 rounded-md text-lg">

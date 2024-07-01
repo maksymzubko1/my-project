@@ -1,4 +1,9 @@
-import { ArrowLeftIcon, DashboardIcon, ExitIcon, PersonIcon } from "@radix-ui/react-icons";
+import {
+  ArrowLeftIcon,
+  DashboardIcon,
+  ExitIcon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
 import { Form, Link, useFetcher, useLocation } from "@remix-run/react";
 import { useCallback } from "react";
 
@@ -37,11 +42,19 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
   return (
     <header className="sticky z-50 top-0 flex gap-2 items-center justify-between bg-slate-800 p-4 text-white">
       <div className="flex items-center justify-center gap-2">
-        {backUrl &&
-          <Link className={"transition-all flex items-center justify-center h-[42px] py-2 px-1 [&>svg]:w-[20px] [&>svg]:h-[20px] rounded-md border border-transparent text-base font-medium shadow-sm h-full bg-slate-600 text-blue-100 hover:bg-blue-500 active:bg-blue-600"} to={{pathname: backUrl.split('?')[0], search: backUrl.split('?')?.[1] || ""}}>
-            <ArrowLeftIcon/>
+        {backUrl ? (
+          <Link
+            className={
+              "transition-all flex items-center justify-center h-[42px] py-2 px-1 [&>svg]:w-[20px] [&>svg]:h-[20px] rounded-md border border-transparent text-base font-medium shadow-sm h-full bg-slate-600 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+            }
+            to={{
+              pathname: backUrl.split("?")[0],
+              search: backUrl.split("?")?.[1] || "",
+            }}
+          >
+            <ArrowLeftIcon />
           </Link>
-        }
+        ) : null}
         <Button variant={"secondary-2"} link={{ to: "/" }}>
           Home
         </Button>

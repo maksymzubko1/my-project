@@ -79,9 +79,11 @@ const Select = ({
                 >
                   {label}
                 </label>
-                {tooltip ? <ToolTip tooltip={tooltip}>
+                {tooltip ? (
+                  <ToolTip tooltip={tooltip}>
                     <InfoCircledIcon />
-                  </ToolTip> : null}
+                  </ToolTip>
+                ) : null}
               </div>
             ) : null}
             <Button

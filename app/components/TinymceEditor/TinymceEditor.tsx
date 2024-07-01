@@ -23,17 +23,21 @@ export default function TinymceEditor({
 }: TinymceEditorProps) {
   return (
     <div>
-      {label ? <div className={"flex gap-1 items-center"}>
+      {label ? (
+        <div className={"flex gap-1 items-center"}>
           <label
             htmlFor={"editor"}
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             {label}
           </label>
-          {tooltip ? <ToolTip tooltip={tooltip}>
+          {tooltip ? (
+            <ToolTip tooltip={tooltip}>
               <InfoCircledIcon />
-            </ToolTip> : null}
-        </div> : null}
+            </ToolTip>
+          ) : null}
+        </div>
+      ) : null}
       <Editor
         id={"editor"}
         apiKey="l7jaff3jrj0vsf061fldyduej7q93wvxgh65dapulh9jt0ry"

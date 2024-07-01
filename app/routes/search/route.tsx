@@ -5,11 +5,11 @@ import Button from "~/components/Button/Button";
 import Input from "~/components/Input/Input";
 import Pagination from "~/components/Pagination/Pagination";
 import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 import UserHeader from "~/components/UserHeader/Header";
 import { getSearchParams } from "~/utils";
 
 import { loader as routeLoader } from "./loader";
-import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
 export const meta: MetaFunction = () => [
   {
@@ -64,7 +64,7 @@ export default function Index() {
           </section>
         </div>
       </main>
-      <ScrollToTop target={"main"}/>
+      <ScrollToTop target={"main"} />
     </>
   );
 }
