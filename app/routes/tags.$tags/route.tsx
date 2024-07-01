@@ -5,13 +5,16 @@ import Pagination from "~/components/Pagination/Pagination";
 import PostsWithMixins from "~/components/PostsWithMixins/PostWithMixins";
 import UserHeader from "~/components/UserHeader/Header";
 
-export const meta: MetaFunction = () =>[{
-  title: "Posts by Tag - Remix News",
-  description: "Explore posts categorized by tags on Remix News.",
-  keywords: "posts, articles, blog, tags, categories",
-}];
+export const meta: MetaFunction = () => [
+  {
+    title: "Posts by Tag - Remix News",
+    description: "Explore posts categorized by tags on Remix News.",
+    keywords: "posts, articles, blog, tags, categories",
+  },
+];
 
 import { loader as routeLoader } from "./loader";
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
 export const loader = routeLoader;
 
@@ -35,6 +38,7 @@ export default function Index() {
           </section>
         </div>
       </main>
+      <ScrollToTop target={"main"}/>
     </>
   );
 }

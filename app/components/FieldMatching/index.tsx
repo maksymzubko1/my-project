@@ -1,6 +1,8 @@
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useCallback } from "react";
 
 import Select from "~/components/Select";
+import ToolTip from "~/components/Tooltip/Tooltip";
 
 interface FieldMatchingProps {
   fields: Record<string, string>;
@@ -32,9 +34,18 @@ const FieldMatching = ({
   return (
     <div className={"w-[400px] flex flex-col items-center gap-2"}>
       {label ? (
-        <label className="block text-start text-sm font-medium w-full text-gray-700">
-          {label}
-        </label>
+        <div className={"flex gap-1 items-center w-full"}>
+          <label className="block text-start text-sm font-medium text-gray-700">
+            {label}
+          </label>
+          <ToolTip
+            tooltip={
+              "This is a set of data of the key-value type, \nwhere the keys are the columns from the database (left column)\n and the keys from rss (right column) are the values."
+            }
+          >
+            <InfoCircledIcon />
+          </ToolTip>
+        </div>
       ) : null}
       {Object.entries(fields).map(([key, value], index) => (
         <div

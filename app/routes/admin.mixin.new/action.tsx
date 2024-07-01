@@ -48,12 +48,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     uploadHandler,
   );
 
-  const name = formData.get("name") as string;
-  const linkForImage = formData.get("linkForImage") as string;
-  const linkForText = formData.get("linkForText") as string;
+  const name = (formData.get("name") as string)?.trim();
+  const linkForImage = (formData.get("linkForImage") as string)?.trim();
+  const linkForText = (formData.get("linkForText") as string)?.trim();
   const type = formData.get("type") as string;
-  const text = formData.get("text") as string;
-  const textForLink = formData.get("textForLink") as string;
+  const text = (formData.get("text") as string)?.trim();
+  const textForLink = (formData.get("textForLink") as string)?.trim();
   const image = formData.get("image");
   const displayOn = formData.get("displayOn") as string;
   const pageType = formData.get("pageType") as string;
@@ -66,7 +66,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   let errors = {};
 
   if (isEmpty(name)) {
-    errors = { ...errors, name: "Name is required" };
+    errors = { ...errors, name: "Title is required" };
+  }
+
+  if (name.length > 60) {
+    errors = { ...errors, name: "Max title length - 60" };
   }
 
   if (isEmpty(type)) {
@@ -102,8 +106,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, linkForImage: "Incorrect URL" };
   }
 
+  if (linkForImage.length > 130) {
+    errors = { ...errors, linkForImage: "Max link for image length - 130" };
+  }
+
   if (!isEmpty(linkForText) && !isURL(linkForText)) {
     errors = { ...errors, linkForText: "Incorrect URL" };
+  }
+
+  if (linkForText.length > 130) {
+    errors = { ...errors, linkForText: "Max link for text length - 130" };
   }
 
   if (!isEmpty(regex) && !isRegex(regex)) {
@@ -126,6 +138,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (MixinType[type] === "TEXT" && isEmpty(text) && !isDraft) {
     errors = { ...errors, text: "Text is required" };
+  }
+
+  if (text.length > 400) {
+    errors = { ...errors, text: "Max text length - 400" };
   }
 
   if (MixinType[type] === "POST" && isEmpty(postId) && !isDraft) {

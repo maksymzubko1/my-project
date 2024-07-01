@@ -68,7 +68,7 @@ export async function getRandomMixinList({
   if (search && search.length > 0 && page === "search") {
     idList = idList.filter((item) => {
       if (item.regex && item.regex?.length > 0) {
-        return (item.regex as RegExp)?.test(search);
+        return RegExp(item.regex)?.test(search);
       }
       return true;
     });

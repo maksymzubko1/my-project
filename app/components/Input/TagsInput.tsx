@@ -1,8 +1,9 @@
-import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
+import { Cross1Icon, InfoCircledIcon, PlusIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useCallback, useState } from "react";
 
 import HiddenInput from "~/components/Input/HiddenInput";
 import { Badge } from "~/components/shadcn/ui/badge";
+import ToolTip from "~/components/Tooltip/Tooltip";
 
 interface TagsInputProps {
   error?: string;
@@ -11,6 +12,7 @@ interface TagsInputProps {
   fullWidth?: boolean;
   label?: string;
 
+  tooltip?: string;
   value: string[];
   onChange: (value: string[]) => void;
 }
@@ -22,6 +24,7 @@ const TagsInput = ({
   fullWidth,
   label,
   onChange,
+  tooltip,
   value,
 }: TagsInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -49,9 +52,17 @@ const TagsInput = ({
     <div className={`${fullWidth ? "w-full " : ""}flex flex-col gap-1`}>
       <HiddenInput name={name} value={value.join(",") || ""} />
       {label ? (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
+        <div className={"flex gap-1 items-center"}>
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {label}
+          </label>
+          {tooltip ? <ToolTip tooltip={tooltip}>
+              <InfoCircledIcon />
+            </ToolTip> : null}
+        </div>
       ) : null}
       <div className="tags-input flex-1 rounded-md text-lg">
         <ul className="tags-list flex gap-2 flex-wrap items-center">

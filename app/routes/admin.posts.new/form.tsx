@@ -9,7 +9,7 @@ import TinymceEditor from "~/components/TinymceEditor/TinymceEditor";
 import { PostFormContext } from "~/contexts/PostContext";
 
 const Form = () => {
-  const { extras, onChange, onSubmit, values, errors } =
+  const { extras, onChange, onSubmit, values, errors, isLoading } =
     useContext(PostFormContext);
 
   const onSubmitFunction = useCallback(
@@ -51,11 +51,13 @@ const Form = () => {
         error={errors?.image}
         onChange={(value) => onChange(value, "image")}
         value={values.image}
+        tooltip={"This image will be used like cover image"}
         placeholder={"Select your photo"}
       />
 
       <TinymceEditor
         name={"body"}
+        label={"Post content"}
         error={errors?.body}
         value={values.body}
         onChange={(value) => onChange(value, "body")}
@@ -66,6 +68,9 @@ const Form = () => {
         inputSettings={{ variant: "textarea" }}
         label={"Description"}
         id={"description"}
+        tooltip={
+          "A short description of the post that will be shown in the preview to users"
+        }
         error={errors?.description}
         value={values.description}
         onChange={(value) => onChange(value, "description")}
@@ -84,6 +89,7 @@ const Form = () => {
         <Button
           formMethod={"post"}
           variant="primary"
+          loading={isLoading}
           disabled={!extras?.isDirty}
           isSubmit
         >
@@ -93,6 +99,7 @@ const Form = () => {
           formMethod={"post"}
           formAction={"draft"}
           variant="secondary-2"
+          loading={isLoading}
           disabled={!extras?.isDirty}
           onClick={handleClickDraft}
         >

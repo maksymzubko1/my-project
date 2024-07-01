@@ -15,7 +15,7 @@
     "postgres": "docker compose up -d postgres",
     "format": "prettier --write ./app",
     "lint": "eslint --cache --fix --cache-location ./node_modules/.cache/eslint .",
-    "setup": "prisma generate && prisma migrate deploy && prisma db seed",
+    "setup": "npx prisma generate && npx prisma migrate deploy && npx prisma db seed",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "cron": "ts-node -r tsconfig-paths/register scripts/cron.ts"
   },

@@ -70,11 +70,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
 };
 
-export const meta: MetaFunction = () => [{
-  title: "Sign Up - Remix News",
-  description: "Create an account to access exclusive content and features.",
-  keywords: "sign up, join, create account, user registration",
-}];
+export const meta: MetaFunction = () => [
+  {
+    title: "Sign Up - Remix News",
+    description: "Create an account to access exclusive content and features.",
+    keywords: "sign up, join, create account, user registration",
+  },
+];
 
 export default function Join() {
   const [searchParams] = useSearchParams();

@@ -48,11 +48,13 @@ const Form = () => {
         error={errors?.image}
         onChange={(value) => onChange(value, "image")}
         value={values.image}
+        tooltip={"This image will be used like cover image"}
         placeholder={"Select your photo"}
       />
 
       <TinymceEditor
         name={"body"}
+        label={"Post content"}
         error={errors?.body}
         value={values.body}
         onChange={(value) => onChange(value, "body")}
@@ -64,6 +66,9 @@ const Form = () => {
         label={"Description"}
         id={"description"}
         error={errors?.description}
+        tooltip={
+          "A short description of the post that will be shown in the preview to users"
+        }
         value={values.description}
         onChange={(value) => onChange(value, "description")}
       />

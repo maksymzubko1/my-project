@@ -20,10 +20,10 @@ const ToolTip: FC<Props> = ({ children, tooltip, disabled }): JSX.Element => {
 
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={500}>
         <TooltipTrigger>{children}</TooltipTrigger>
         <TooltipContent>
-          <p>{tooltip}</p>
+          <p className={"whitespace-pre-line"}>{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

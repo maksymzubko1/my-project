@@ -14,11 +14,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const formData = await request.formData();
 
-  const name = formData.get("name") as string;
-  const tags = formData.get("stopTags") as string;
-  const source = formData.get("source") as string;
-  const action = formData.get("action") as string;
-  const interval = formData.get("interval") as string;
+  const name = (formData.get("name") as string)?.trim();
+  const tags = (formData.get("stopTags") as string)?.trim();
+  const source = (formData.get("source") as string)?.trim();
+  const action = (formData.get("action") as string)?.trim();
+  const interval = (formData.get("interval") as string)?.trim();
   let fieldMatching: string | JsonObject = formData.get(
     "fieldMatching",
   ) as string;
@@ -27,6 +27,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (source.length === 0) {
     errors = { ...errors, source: "Source URL is required" };
+  }
+
+  if (source.length > 130) {
+    errors = { ...errors, source: "Max Source URL length - 130" };
   }
 
   if (fieldMatching.length === 0) {
@@ -70,8 +74,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, name: "Title is required" };
   }
 
+  if (name.length > 60) {
+    errors = { ...errors, name: "Max name length - 60" };
+  }
+
   const tagsList =
     tags.length > 0 ? tags.split(",").map((tag) => tag.trim()) : [];
+
+  if (tagsList.length > 15) {
+    errors = { ...errors, stopTags: "Max stop tags count - 15" };
+  }
 
   if (!Interval[interval]) {
     errors = { ...errors, interval: "Incorrect interval value" };

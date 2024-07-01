@@ -1,4 +1,7 @@
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import React, { ChangeEvent, useCallback, useState } from "react";
+
+import ToolTip from "~/components/Tooltip/Tooltip";
 
 interface FileUploadProps {
   label?: string;
@@ -10,6 +13,7 @@ interface FileUploadProps {
   fullWidth?: boolean;
   value?: string;
   onChange?: (value: File | null) => void;
+  tooltip?: string;
 }
 
 function getImage(image: File | string) {
@@ -28,6 +32,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   initialValue,
   error,
   placeholder,
+  tooltip,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialValue ? getImage(initialValue) : null,
@@ -55,12 +60,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className="file-upload">
       {label ? (
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          {label}
-        </label>
+        <div className={"flex gap-1 items-center"}>
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {label}
+          </label>
+          {tooltip ? <ToolTip tooltip={tooltip}>
+              <InfoCircledIcon />
+            </ToolTip> : null}
+        </div>
       ) : null}
       <input
         id={id}

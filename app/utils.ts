@@ -152,6 +152,12 @@ export function isEmpty(value: string | string[] | object | null | undefined) {
   return false;
 }
 
+export function scrollToTop(){
+  if(document?.body){
+    document.body.scrollTo({top: 0, behavior: "smooth"});
+  }
+}
+
 export function getSearchParams(
   searchString: string,
 ): Record<string, string | undefined> {

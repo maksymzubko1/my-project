@@ -13,7 +13,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  if(post.status === "DRAFTED" || post.isDeleted){
+  if (post.status === "DRAFTED" || post.isDeleted) {
     throw new Response("Forbidden", { status: 403 });
   }
 

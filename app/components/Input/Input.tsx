@@ -1,3 +1,4 @@
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   HTMLInputAutoCompleteAttribute,
   HTMLInputTypeAttribute,
@@ -7,6 +8,7 @@ import {
 
 import { Input as InputShadcn } from "~/components/shadcn/ui/input";
 import { Textarea } from "~/components/shadcn/ui/textarea";
+import ToolTip from "~/components/Tooltip/Tooltip";
 
 const Input = ({
   name,
@@ -20,6 +22,7 @@ const Input = ({
   value,
   onChange,
   disabled,
+  tooltip,
 }: InputProps) => {
   const inputRef = useRef(null);
 
@@ -69,9 +72,17 @@ const Input = ({
   return (
     <div className={`${fullWidth ? "w-full " : ""}flex flex-col gap-1`}>
       {label ? (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
+        <div className={"flex gap-1 items-center"}>
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {label}
+          </label>
+          {tooltip ? <ToolTip tooltip={tooltip}>
+              <InfoCircledIcon />
+            </ToolTip> : null}
+        </div>
       ) : null}
       {inputComponent}
       {error ? (
@@ -87,6 +98,7 @@ export default Input;
 
 interface InputProps {
   name: string;
+  tooltip?: string;
   error?: string;
   fullWidth?: boolean;
   initialValue?: string;

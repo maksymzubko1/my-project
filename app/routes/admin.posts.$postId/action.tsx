@@ -46,16 +46,20 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     uploadHandler,
   );
 
-  const title = formData.get("title") as string;
-  const body = formData.get("body") as string;
-  const description = formData.get("description") as string;
+  const title = (formData.get("title") as string).trim();
+  const body = (formData.get("body") as string).trim();
+  const description = (formData.get("description") as string).trim();
   const image = formData.get("image");
-  const tags = formData.get("tags") as string;
+  const tags = (formData.get("tags") as string).trim();
 
   let errors = {};
 
   if (title?.length === 0) {
     errors = { ...errors, title: "Title is required" };
+  }
+
+  if (title?.length > 160) {
+    errors = { ...errors, title: "Max title length - 160" };
   }
 
   if (body?.length === 0) {
@@ -66,6 +70,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     errors = { ...errors, description: "Description is required" };
   }
 
+  if (description?.length > 400) {
+    errors = { ...errors, description: "Max description length - 400" };
+  }
+
   if (tags?.length === 0) {
     errors = { ...errors, tags: "Tags is required" };
   }
@@ -74,6 +82,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
   if (tagsList?.length === 0) {
     errors = { ...errors, tags: "Minimum 1 tag required" };
+  }
+
+  if (tagsList?.length > 15) {
+    errors = { ...errors, tags: "Max tags count - 15" };
   }
 
   const uploadedFile =
@@ -92,7 +104,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const updatedPost = await updatePost(params.postId, {
     body,
     title,
-    image: uploadedFile,
+    image: {
+      remove: image === "null",
+      url: uploadedFile,
+    },
     tags: tagsList,
     description,
   });

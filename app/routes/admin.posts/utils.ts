@@ -35,6 +35,7 @@ export function generateItems(
       text: "Make visible",
       onClick: () => action("SHOW", post.id),
       icon: EyeOpenIcon,
+      tooltip: "The post will visible for all users",
     });
   }
 
@@ -43,6 +44,7 @@ export function generateItems(
       text: "Hide",
       onClick: () => action("HIDE", post.id),
       icon: EyeNoneIcon,
+      tooltip: "The post will visible only via link",
     });
   }
 

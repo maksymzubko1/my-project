@@ -37,11 +37,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     uploadHandler,
   );
 
-  const title = formData.get("title") as string;
-  const body = formData.get("body") as string;
-  const description = formData.get("description") as string;
+  const title = (formData.get("title") as string).trim();
+  const body = (formData.get("body") as string).trim();
+  const description = (formData.get("description") as string).trim();
   const image = formData.get("image");
-  const tags = formData.get("tags") as string;
+  const tags = (formData.get("tags") as string).trim();
 
   const isDraft = !!formData.get("draft");
 
@@ -51,12 +51,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     errors = { ...errors, title: "Title is required" };
   }
 
+  if (title?.length > 160) {
+    errors = { ...errors, title: "Max title length - 160" };
+  }
+
   if (body?.length === 0 && !isDraft) {
     errors = { ...errors, body: "Body is required" };
   }
 
   if (description?.length === 0 && !isDraft) {
     errors = { ...errors, description: "Description is required" };
+  }
+
+  if (description?.length > 400) {
+    errors = { ...errors, description: "Max description length - 400" };
   }
 
   if (tags?.length === 0 && !isDraft) {
@@ -73,6 +81,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (tagsList?.length === 0 && !isDraft) {
     errors = { ...errors, tags: "Minimum 1 tag required" };
+  }
+
+  if (tagsList?.length > 15) {
+    errors = { ...errors, tags: "Max tags count - 15" };
   }
 
   const uploadedFile =

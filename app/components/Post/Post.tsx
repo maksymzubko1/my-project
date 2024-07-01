@@ -1,8 +1,9 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation, useNavigate } from "@remix-run/react";
 import moment from "moment";
 
 import Button from "~/components/Button/Button";
 import { Badge } from "~/components/shadcn/ui/badge";
+import { useCallback } from "react";
 
 interface PostProps {
   id: string;
@@ -15,21 +16,45 @@ interface PostProps {
 }
 
 const Post = ({
-  id,
-  tagPost,
-  description,
-  image,
-  title,
-  createdAt,
-  isEmbed,
-}: PostProps) => {
+                id,
+                tagPost,
+                description,
+                image,
+                title,
+                createdAt,
+                isEmbed
+              }: PostProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const onClickTag = useCallback((tag: string) => {
+    const tagsList = [...new Set(location.pathname
+        .split("/")?.at(-1)
+        .split("&")
+        .filter((_item) => _item.length)
+      || []
+    )];
+
+    if (tagsList.includes(tag)) {
+      const _tags = tagsList.filter(_tag => _tag !== tag).join("&");
+      if (_tags.length > 0) {
+        navigate({ pathname: `/tags/${_tags}` });
+      } else {
+        navigate({ pathname: "/" });
+      }
+    } else {
+      tagsList.push(tag);
+      navigate({ pathname: `/tags/${tagsList.join("&")}` });
+    }
+  }, [location]);
+
   return (
     <div
       id={id}
       className={
         isEmbed
           ? "w-full h-full flex flex-col gap-2 pt-2"
-          : "bg-muted px-1 md:px-3 py-2 w-full min-h-[100px] md:max-h-[450px] flex border flex-col gap-2 rounded"
+          : "bg-muted px-2 md:px-3 py-2 w-full min-h-[100px] md:max-h-[450px] flex border flex-col gap-2 rounded"
       }
     >
       <h2 className="text-lg">{title}</h2>
@@ -45,19 +70,19 @@ const Post = ({
         {tagPost.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2">
             {tagPost.map((tagItem) => (
-              <Link key={tagItem.tag.name} to={`/tag/${tagItem.tag.name}`}>
-                <Badge className="cursor-pointer" variant="outline">
-                  {tagItem.tag.name}
-                </Badge>
-              </Link>
+              <Badge onClick={() => onClickTag(tagItem.tag.name)}
+                     className="cursor-pointer hover:bg-blue-200 transition-all" variant="outline">
+                {tagItem.tag.name}
+              </Badge>
             ))}
           </div>
         ) : null}
         <span className="flex justify-between items-center">
-          <Button variant={"secondary-2"} link={{ to: `/posts/${id}` }}>
+          <Button variant={"secondary-2"}
+                  link={{ to: `/posts/${id}`, search: `backUrl=${location.pathname}${location.search}` }}>
             View post
           </Button>
-          {moment(createdAt).format("YYYY-MM-DD HH:mm")}
+          {moment(createdAt).format("MM-DD-YYYY HH:mm")}
         </span>
       </div>
     </div>

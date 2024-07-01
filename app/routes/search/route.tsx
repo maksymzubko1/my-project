@@ -9,11 +9,14 @@ import UserHeader from "~/components/UserHeader/Header";
 import { getSearchParams } from "~/utils";
 
 import { loader as routeLoader } from "./loader";
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
-export const meta: MetaFunction = () => [{
-  title: "Search - Remix News",
-  description: "Explore posts and news articles on Remix News.",
-}];
+export const meta: MetaFunction = () => [
+  {
+    title: "Search - Remix News",
+    description: "Explore posts and news articles on Remix News.",
+  },
+];
 
 export const loader = routeLoader;
 
@@ -61,6 +64,7 @@ export default function Index() {
           </section>
         </div>
       </main>
+      <ScrollToTop target={"main"}/>
     </>
   );
 }

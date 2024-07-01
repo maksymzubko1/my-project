@@ -1,4 +1,8 @@
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import {
+  CaretSortIcon,
+  CheckIcon,
+  InfoCircledIcon,
+} from "@radix-ui/react-icons";
 import React from "react";
 
 import HiddenInput from "~/components/Input/HiddenInput";
@@ -16,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/shadcn/ui/popover";
+import ToolTip from "~/components/Tooltip/Tooltip";
 import { cn } from "~/lib/utils";
 
 interface SelectItem {
@@ -37,6 +42,7 @@ interface SelectProps {
   disableFilter?: boolean;
   error?: string;
   id?: string;
+  tooltip?: string;
 }
 
 const Select = ({
@@ -50,6 +56,7 @@ const Select = ({
   showSelected,
   placeholder,
   error,
+  tooltip,
   id,
 }: SelectProps) => {
   const [open, setOpen] = React.useState(false);
@@ -65,17 +72,24 @@ const Select = ({
         >
           <div className="w-fit">
             {label ? (
-              <label
-                htmlFor={id}
-                className="block text-sm font-medium text-gray-700"
-              >
-                {label}
-              </label>
+              <div className={"flex gap-1 items-center"}>
+                <label
+                  htmlFor={id}
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  {label}
+                </label>
+                {tooltip ? <ToolTip tooltip={tooltip}>
+                    <InfoCircledIcon />
+                  </ToolTip> : null}
+              </div>
             ) : null}
             <Button
               id={id}
               type={"button"}
               variant="outline"
+              disabled={disabled}
+              aria-disabled={disabled}
               role="combobox"
               aria-expanded={open}
               className={`${showSelected !== false ? "w-[200px]" : ""} justify-between`}

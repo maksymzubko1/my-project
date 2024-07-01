@@ -19,7 +19,7 @@ export type TCreatePost = Pick<Post, "body" | "title" | "description"> & {
 export type TUpdatePost = Pick<Post, "body" | "title" | "description"> & {
   tags: Tag["name"][];
 } & {
-  image?: string;
+  image?: { remove: boolean; url: string };
 };
 
 export interface PostMixedType {

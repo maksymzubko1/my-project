@@ -98,7 +98,6 @@ class AwsService {
 
   async deleteFileByUrl(fileUrl: string) {
     if (!fileUrl.includes(process.env.AWS_BUCKET)) {
-      console.log("ne nash");
       return;
     }
 

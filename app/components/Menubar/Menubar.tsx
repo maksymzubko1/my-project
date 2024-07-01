@@ -38,7 +38,7 @@ const MenubarComponent = ({ children, items, id }: MenubarProps) => {
             ) : (
               <MenubarItem
                 key={index}
-                className="cursor-pointer"
+                className="cursor-pointer w-full [&>button]:w-full"
                 onClick={item?.onClick}
               >
                 <Tooltip
@@ -58,7 +58,7 @@ const MenubarComponent = ({ children, items, id }: MenubarProps) => {
                       {item.text}
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 w-full">
                       {typeof item.icon === "string" ? (
                         item.icon
                       ) : (

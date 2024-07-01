@@ -42,6 +42,7 @@ const Form = () => {
           placeholder={"Enter source URL"}
           error={errors?.source}
           value={values.source}
+          tooltip={"URL of RSS source, which will be used for fetching posts"}
           onChange={(value) => onChange(value, "source")}
         />
       </div>
@@ -64,6 +65,7 @@ const Form = () => {
             id={"name"}
             error={errors?.name}
             value={values.name}
+            tooltip={"Users will not see this. Its only for admins"}
             onChange={(value) => onChange(value, "name")}
           />
 
@@ -74,6 +76,7 @@ const Form = () => {
             label={"Fetch interval"}
             items={intervalOptions}
             placeholder={"Select interval"}
+            tooltip={"How often will rss data be pulled"}
             value={values.interval as string}
             onChange={(value) => onChange(value, "interval")}
           />
@@ -84,6 +87,9 @@ const Form = () => {
             name={"stopTags"}
             label={"Stop tags"}
             value={values.stopTags}
+            tooltip={
+              "This is a list of tags, posts including them will be ignored"
+            }
             onChange={(value) => onChange(value, "stopTags")}
           />
 

@@ -2,7 +2,6 @@ import type { Post } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { deleteMedia } from "~/models/media.server";
 import { getRandomMixinList } from "~/models/mixin.server";
 import { createTags } from "~/models/tags.server";
 import {
@@ -102,7 +101,7 @@ export async function getPostListItemsWithMixing({
   sort,
   query,
   page,
-  tag,
+  tags,
   pageName,
   pageSize = 10,
 }: {
@@ -111,10 +110,10 @@ export async function getPostListItemsWithMixing({
   page?: number;
   pageSize?: number;
   pageName: "search" | "list" | "tag";
-  tag?: string;
+  tags?: string[];
 }): Promise<PostMixedType> {
   let orderBy: any = { createdAt: SortOrder.desc };
-  let where: any = {isDeleted: false, status: "DEFAULT"};
+  let where: any = { isDeleted: false, status: "DEFAULT" };
 
   if (sort && sort.split("_").length === 2) {
     const sortBy = sort.split("_");
@@ -145,13 +144,15 @@ export async function getPostListItemsWithMixing({
     };
   }
 
-  if (tag && tag.length > 0) {
+  if (tags && tags.length > 0) {
     where = {
       ...where,
       tagPost: {
         some: {
           tag: {
-            name: { equals: tag },
+            name: {
+              in: tags
+            },
           },
         },
       },
@@ -244,7 +245,7 @@ export async function createPost(
 
 export async function updatePost(
   postId: Post["id"],
-  { body, title, image, description, tags }: TUpdatePost,
+  { body, title, description, image, tags }: TUpdatePost,
 ): Promise<TPost> {
   const post = await getPost({ id: postId });
 
@@ -269,15 +270,15 @@ export async function updatePost(
   }
 
   if (image) {
-    if (post?.image?.id) {
-      await deleteMedia({ id: post.image.id });
+    if (image.remove) {
+      postData.imageId = null;
+    } else if (image.url && image.url.length > 0) {
+      postData.image = {
+        create: {
+          url: image.url,
+        },
+      };
     }
-
-    postData.image = {
-      create: {
-        url: image,
-      },
-    };
   }
 
   return prisma.post.update({
@@ -326,7 +327,7 @@ export async function changePostStatus({
     where: { id },
     data: {
       status: status || undefined,
-      isDeleted: isDeleted || undefined,
+      isDeleted: isDeleted,
     },
   });
 }

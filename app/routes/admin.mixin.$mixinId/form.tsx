@@ -55,6 +55,7 @@ const Form = () => {
         id={"name"}
         error={errors?.name}
         value={values.name}
+        tooltip={"Users will not see this. Its only for admins"}
         onChange={(value) => onChange(value, "name")}
       />
 
@@ -85,6 +86,7 @@ const Form = () => {
             label={"Link"}
             id={"link"}
             error={errors?.linkForImage}
+            tooltip={"This link will be available by clicking on the image"}
             value={values.linkForImage}
             onChange={(value) => onChange(value, "linkForImage")}
           />
@@ -99,6 +101,7 @@ const Form = () => {
             label={"Text"}
             id={"text"}
             error={errors?.text}
+            tooltip={"Text for the mixin that will be displayed to users"}
             value={values.text}
             onChange={(value) => onChange(value, "text")}
           />
@@ -107,6 +110,7 @@ const Form = () => {
             inputSettings={{ variant: "input" }}
             label={"Text for link"}
             id={"textForLink"}
+            tooltip={"This text for link at the bottom of the mixin"}
             error={errors?.textForLink}
             value={values.textForLink}
             onChange={(value) => onChange(value, "textForLink")}
@@ -116,6 +120,9 @@ const Form = () => {
             inputSettings={{ variant: "input" }}
             label={"Link"}
             id={"link"}
+            tooltip={
+              "This link will be available by clicking on the link at the bottom of the mixin"
+            }
             error={errors?.linkForText}
             value={values.linkForText}
             onChange={(value) => onChange(value, "linkForText")}
@@ -139,6 +146,7 @@ const Form = () => {
             error={errors?.displayOn}
             disableFilter
             label={"Display on"}
+            tooltip={"Specifies on which pages this mixin will be shown"}
             items={mixinDisplayOn}
             value={values.displayOn}
             onChange={(value) => onChange(value, "displayOn")}
@@ -156,6 +164,9 @@ const Form = () => {
                 error={errors?.pageType}
                 disableFilter
                 label={"Page type"}
+                tooltip={
+                  "Specifies on which pages this mixin will be shown. \nSame as displayOn but not available on the Search page."
+                }
                 items={mixinPageType}
                 value={values.pageType}
                 onChange={(value) => onChange(value, "pageType")}
@@ -170,6 +181,9 @@ const Form = () => {
                 }}
                 label={"Priority"}
                 id={"priority"}
+                tooltip={
+                  "Priority of the mixin. 100 is one of first, 0 is the last."
+                }
                 error={errors?.priority}
                 value={String(values.priority)}
                 onChange={(value) => onChange(value, "priority")}
@@ -190,6 +204,9 @@ const Form = () => {
                 inputSettings={{ variant: "input" }}
                 label={"Regex"}
                 id={"regex"}
+                tooltip={
+                  "RegExp which will only be used on the search page for display."
+                }
                 error={errors?.regex}
                 value={values.regex}
                 onChange={(value) => onChange(value, "regex")}

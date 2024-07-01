@@ -9,6 +9,7 @@ import UserHeader from "~/components/UserHeader/Header";
 
 import { loader as routeLoader } from "./loader";
 import styles from "./styles.module.css";
+import ScrollToTop from "~/components/ScrollTop/ScrollTop";
 
 export const meta: MetaFunction = (args) => {
   return [{ title: `Remix News - Post ${args.params.postId}` }];
@@ -22,13 +23,14 @@ export default function PostPage() {
   return (
     <>
       <UserHeader />
-      <div className="h-full full-height flex flex-col gap-2 px-4 mt-2 md:px-8 max-w-[1500px] w-full md:w-[80%] mx-auto">
+      <main className="h-full full-height flex flex-col gap-2 px-4 mt-2 md:px-8 max-w-[1500px] w-full md:w-[80%] mx-auto">
         <h2 className="text-xl">{post.title}</h2>
         <div
           className={`${styles.post}`}
           dangerouslySetInnerHTML={{ __html: post.body }}
         />
-      </div>
+      </main>
+      <ScrollToTop target={"body"}/>
     </>
   );
 }
