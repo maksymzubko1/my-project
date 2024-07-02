@@ -45,7 +45,7 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
         {backUrl ? (
           <Link
             className={
-              "transition-all flex items-center justify-center h-[42px] py-2 px-1 [&>svg]:w-[20px] [&>svg]:h-[20px] rounded-md border border-transparent text-base font-medium shadow-sm h-full bg-slate-600 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+              "transition-all flex items-center justify-center h-[42px] py-2 px-1 [&>svg]:w-[20px] [&>svg]:h-[20px] rounded-md border border-transparent text-base font-medium shadow-sm bg-slate-600 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
             }
             to={{
               pathname: backUrl.split("?")[0],
@@ -63,7 +63,7 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
         {!hideSearch ? (
           <Form
             method={"GET"}
-            className="flex items-center w-full px-2 gap-2 text-black [&>button]:hidden md:[&>button]:flex"
+            className="flex items-center w-full h-full px-2 gap-2 text-black [&>button]:hidden md:[&>button]:flex"
             action={"/search"}
           >
             <Input
@@ -90,9 +90,6 @@ const UserHeader = ({ hideSearch = false }: HeaderProps) => {
               <PersonIcon color={"black"} />
             </MenubarComponent>
           )
-          // <Button variant={"secondary-2"} link={{ to: "/logout" }}>
-          //   Logout
-          // </Button>
         }
       </div>
     </header>
