@@ -31,14 +31,14 @@ const Post = ({
     (tag: string) => {
       const tagsList = [
         ...new Set(
-          location.pathname
+          decodeURIComponent(location.pathname)
             .split("/")
             ?.at(-1)
             .split("&")
             .filter((_item) => _item.length) || [],
         ),
       ];
-
+      
       if (tagsList.includes(tag)) {
         const _tags = tagsList.filter((_tag) => _tag !== tag).join("&");
         if (_tags.length > 0) {
