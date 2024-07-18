@@ -8,6 +8,8 @@ function getCurrentPage(pathname: string) {
     return "Posts";
   } else if (pathname.includes("/admin/rss")) {
     return "RSS";
+  } else if (pathname.includes("/admin/mixin")) {
+    return "Mixins";
   }
 }
 
