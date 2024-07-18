@@ -127,9 +127,18 @@ scheduleJob("* * * * *", async () => {
         id: true
       },
       where: {
-        posts: {
-          none: {}
-        }
+        AND: [
+          {
+            posts: {
+              none: {}
+            }
+          },
+          {
+            mixins: {
+              none: {}
+            }
+          }
+        ]
       }
     });
 
